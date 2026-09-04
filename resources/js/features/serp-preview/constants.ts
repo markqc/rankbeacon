@@ -1,0 +1,65 @@
+import { Globe, Search, Target, Zap } from 'lucide-react';
+import type { Device, FaviconKey, SerpState } from './types';
+
+export const SERP_FONTS = {
+    title: '20px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    description:
+        '14px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    url: '14px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+};
+
+export const SERP_THRESHOLDS: Record<
+    Device,
+    {
+        titleMaxWidth: number;
+        titleWarningRatio: number;
+        descMaxWidth: number;
+        descMaxLines: number;
+        descMaxPixels: number;
+        descMaxChars: number;
+        descEllipsisChars: number;
+        descWarningRatio: number;
+        previewWidth: number;
+    }
+> = {
+    desktop: {
+        titleMaxWidth: 580,
+        titleWarningRatio: 0.8,
+        descMaxWidth: 600,
+        descMaxLines: 99,
+        descMaxPixels: 920,
+        descMaxChars: 100,
+        descEllipsisChars: 139,
+        descWarningRatio: 0.8,
+        previewWidth: 600,
+    },
+    mobile: {
+        titleMaxWidth: 340,
+        titleWarningRatio: 0.8,
+        descMaxWidth: 360,
+        descMaxLines: 99,
+        descMaxPixels: 920,
+        descMaxChars: 100,
+        descEllipsisChars: 139,
+        descWarningRatio: 0.8,
+        previewWidth: 360,
+    },
+};
+
+export const SAMPLE: SerpState = {
+    url: 'https://rankbeacon.app/tools/serp-preview',
+    siteName: 'RankBeacon',
+    title: 'SERP Preview — RankBeacon',
+    description: 'Preview your page title and description before searchers see them in Google results.',
+    breadcrumb: 'tools/serp-preview',
+    favicon: 'globe',
+    faviconUrl: null,
+    device: 'desktop',
+};
+
+export const FAVICON_OPTIONS = [
+    { value: 'globe' as FaviconKey, label: 'Globe', Icon: Globe },
+    { value: 'search' as FaviconKey, label: 'Search', Icon: Search },
+    { value: 'zap' as FaviconKey, label: 'Zap', Icon: Zap },
+    { value: 'target' as FaviconKey, label: 'Target', Icon: Target },
+] as const;
