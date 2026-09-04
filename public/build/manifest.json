@@ -1,0 +1,203 @@
+{
+  "_Alert-DtQvjKNx.js": {
+    "file": "assets/Alert-DtQvjKNx.js",
+    "name": "Alert",
+    "imports": [
+      "resources/js/app.tsx",
+      "_MainLayout-D-v63FfA.js",
+      "_triangle-alert-Bii0_yzx.js"
+    ]
+  },
+  "_Card-jUAV_QSX.js": {
+    "file": "assets/Card-jUAV_QSX.js",
+    "name": "Card",
+    "imports": [
+      "resources/js/app.tsx"
+    ]
+  },
+  "_MainLayout-D-v63FfA.js": {
+    "file": "assets/MainLayout-D-v63FfA.js",
+    "name": "MainLayout",
+    "imports": [
+      "resources/js/app.tsx"
+    ]
+  },
+  "_monitor-rjmNK0lj.js": {
+    "file": "assets/monitor-rjmNK0lj.js",
+    "name": "monitor",
+    "imports": [
+      "_MainLayout-D-v63FfA.js"
+    ]
+  },
+  "_smartphone-eGLHILVw.js": {
+    "file": "assets/smartphone-eGLHILVw.js",
+    "name": "smartphone",
+    "imports": [
+      "_MainLayout-D-v63FfA.js"
+    ]
+  },
+  "_triangle-alert-Bii0_yzx.js": {
+    "file": "assets/triangle-alert-Bii0_yzx.js",
+    "name": "triangle-alert",
+    "imports": [
+      "_MainLayout-D-v63FfA.js"
+    ]
+  },
+  "_useScrollReveal-DryUS9TR.js": {
+    "file": "assets/useScrollReveal-DryUS9TR.js",
+    "name": "useScrollReveal",
+    "imports": [
+      "resources/js/app.tsx",
+      "_MainLayout-D-v63FfA.js"
+    ]
+  },
+  "_users-D3OroZ_3.js": {
+    "file": "assets/users-D3OroZ_3.js",
+    "name": "users",
+    "imports": [
+      "_MainLayout-D-v63FfA.js"
+    ]
+  },
+  "_zap-CfF1CTec.js": {
+    "file": "assets/zap-CfF1CTec.js",
+    "name": "zap",
+    "imports": [
+      "_MainLayout-D-v63FfA.js"
+    ]
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-BAgxql1j.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.tsx": {
+    "file": "assets/app-DxNOWW0H.js",
+    "name": "app",
+    "src": "resources/js/app.tsx",
+    "isEntry": true,
+    "dynamicImports": [
+      "resources/js/pages/About.tsx",
+      "resources/js/pages/Error/404.tsx",
+      "resources/js/pages/Error/500.tsx",
+      "resources/js/pages/Guides.tsx",
+      "resources/js/pages/Home.tsx",
+      "resources/js/pages/Privacy.tsx",
+      "resources/js/pages/Terms.tsx",
+      "resources/js/pages/Tools/Index.tsx",
+      "resources/js/pages/Tools/SerpPreview.tsx"
+    ]
+  },
+  "resources/js/pages/About.tsx": {
+    "file": "assets/About-CwhCEiQe.js",
+    "name": "About",
+    "src": "resources/js/pages/About.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_MainLayout-D-v63FfA.js",
+      "_users-D3OroZ_3.js"
+    ]
+  },
+  "resources/js/pages/Error/404.tsx": {
+    "file": "assets/404-Agstbt5a.js",
+    "name": "404",
+    "src": "resources/js/pages/Error/404.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_MainLayout-D-v63FfA.js"
+    ]
+  },
+  "resources/js/pages/Error/500.tsx": {
+    "file": "assets/500-BdMYBPId.js",
+    "name": "500",
+    "src": "resources/js/pages/Error/500.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_MainLayout-D-v63FfA.js"
+    ]
+  },
+  "resources/js/pages/Guides.tsx": {
+    "file": "assets/Guides-CuF0kuPB.js",
+    "name": "Guides",
+    "src": "resources/js/pages/Guides.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_MainLayout-D-v63FfA.js",
+      "_triangle-alert-Bii0_yzx.js",
+      "_monitor-rjmNK0lj.js",
+      "_smartphone-eGLHILVw.js"
+    ]
+  },
+  "resources/js/pages/Home.tsx": {
+    "file": "assets/Home-BXOgDwzo.js",
+    "name": "Home",
+    "src": "resources/js/pages/Home.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_MainLayout-D-v63FfA.js",
+      "_users-D3OroZ_3.js",
+      "_useScrollReveal-DryUS9TR.js",
+      "_smartphone-eGLHILVw.js",
+      "_zap-CfF1CTec.js",
+      "_Card-jUAV_QSX.js"
+    ]
+  },
+  "resources/js/pages/Privacy.tsx": {
+    "file": "assets/Privacy-XFOLMWf5.js",
+    "name": "Privacy",
+    "src": "resources/js/pages/Privacy.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_MainLayout-D-v63FfA.js",
+      "_Alert-DtQvjKNx.js"
+    ]
+  },
+  "resources/js/pages/Terms.tsx": {
+    "file": "assets/Terms-CXIIaBeH.js",
+    "name": "Terms",
+    "src": "resources/js/pages/Terms.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_MainLayout-D-v63FfA.js",
+      "_Alert-DtQvjKNx.js"
+    ]
+  },
+  "resources/js/pages/Tools/Index.tsx": {
+    "file": "assets/Index-SGOOnB3V.js",
+    "name": "Index",
+    "src": "resources/js/pages/Tools/Index.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_MainLayout-D-v63FfA.js",
+      "_useScrollReveal-DryUS9TR.js",
+      "_smartphone-eGLHILVw.js",
+      "_Card-jUAV_QSX.js"
+    ]
+  },
+  "resources/js/pages/Tools/SerpPreview.tsx": {
+    "file": "assets/SerpPreview-BSHEGAcG.js",
+    "name": "SerpPreview",
+    "src": "resources/js/pages/Tools/SerpPreview.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_MainLayout-D-v63FfA.js",
+      "_Alert-DtQvjKNx.js",
+      "_monitor-rjmNK0lj.js",
+      "_smartphone-eGLHILVw.js",
+      "_zap-CfF1CTec.js",
+      "_Card-jUAV_QSX.js"
+    ]
+  }
+}
