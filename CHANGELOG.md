@@ -12,6 +12,7 @@
 ### Changed
 
 - Admin branding, site name, and favicon are now configured through settings instead of static config.
+- `/privacy` and `/terms` now render the approved Privacy Policy and Terms of Use (effective September 5, 2026), replacing the pre-launch drafts; both pages emit `robots: index,follow` via a new `robots` prop on `PageHead`/`MainLayout`.
 
 ## 1.0.0-MVP — 2026-09-04
 

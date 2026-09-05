@@ -8,6 +8,7 @@ Every public page uses `MainLayout` and `PageHead` to emit:
 - `<meta name="description">`
 - `<meta name="theme-color" content="#10233F">`
 - `<link rel="canonical" href="...">`
+- `<meta name="robots">` when a page passes the optional `robots` prop (e.g., `/privacy` and `/terms` use `index,follow`)
 - Open Graph: `og:url`, `og:title`, `og:description`, `og:image` (when provided), `og:type`
 - Twitter Card: `twitter:card`, `twitter:title`, `twitter:description`, `twitter:image` (when an OG image is provided)
 

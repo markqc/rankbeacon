@@ -31,3 +31,15 @@ The interface is designed to meet **WCAG 2.2 AA** where practical. This document
 2. Activate the Fetch Page button and confirm the status is announced by a screen reader.
 3. Resize to 320px width and confirm no horizontal overflow or overlapping controls.
 4. Run an Axe or Lighthouse accessibility audit on `/`, `/tools/serp-preview`, and `/guides`.
+
+## Policy pages (`/privacy`, `/terms`)
+
+- Both pages wrap content in a semantic `<article>` inside `<main>` with a single `<h1>` and numbered `<h2>` section headings in logical order.
+- The summary panel under each page title is plain text, not a `role="alert"`, so screen readers do not announce it as an alert.
+- External contact links to authoritylighthouse.com are descriptive and keyboard-focusable with visible `:focus-visible` rings.
+
+### Manual checks for policy pages
+
+1. Tab through `/privacy` and `/terms` and confirm the skip link, in-page links, and footer links are reachable.
+2. Verify the heading outline reads `h1` → `h2` → `h3` (privacy page only) with no skipped levels.
+3. Resize to 320px and confirm the long policy lists wrap without horizontal overflow.

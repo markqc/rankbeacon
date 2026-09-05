@@ -9,8 +9,8 @@
 | `/tools/serp-preview` | `resources/js/pages/Tools/SerpPreview.tsx` | SERP Preview tool | Active |
 | `/guides` | `resources/js/pages/Guides.tsx` | SERP title & description guide | Active |
 | `/about` | `resources/js/pages/About.tsx` | Platform information | Active |
-| `/privacy` | `resources/js/pages/Privacy.tsx` | Privacy policy | Active (legal review needed) |
-| `/terms` | `resources/js/pages/Terms.tsx` | Terms and disclaimer | Active (legal review needed) |
+| `/privacy` | `resources/js/pages/Privacy.tsx` | Privacy Policy (approved copy, effective September 5, 2026) | Active |
+| `/terms` | `resources/js/pages/Terms.tsx` | Terms of Use (approved copy, effective September 5, 2026) | Active |
 
 ## Error pages
 

@@ -61,12 +61,18 @@ class SmokeTest extends TestCase
 
     public function test_privacy_page_renders(): void
     {
-        $this->get('/privacy')->assertStatus(200);
+        $response = $this->get('/privacy');
+
+        $response->assertStatus(200);
+        $response->assertSee('"component":"Privacy"', false);
     }
 
     public function test_terms_page_renders(): void
     {
-        $this->get('/terms')->assertStatus(200);
+        $response = $this->get('/terms');
+
+        $response->assertStatus(200);
+        $response->assertSee('"component":"Terms"', false);
     }
 
     public function test_unknown_routes_return_404(): void
@@ -81,6 +87,8 @@ class SmokeTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('<urlset', false);
         $response->assertSee('/about', false);
+        $response->assertSee('/privacy', false);
+        $response->assertSee('/terms', false);
     }
 
     public function test_robots_txt_is_restrictive_in_non_production(): void
