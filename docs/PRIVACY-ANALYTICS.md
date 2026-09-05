@@ -49,4 +49,4 @@ php artisan activity-log:prune
 
 ## Privacy policy disclosure
 
-Visitors should be informed that RankBeacon uses first-party, privacy-conscious analytics to measure site and tool usage. No personally identifiable data or full IP addresses are stored.
+The published Privacy Policy at `/privacy` (effective September 5, 2026) reflects this implementation: RankBeacon uses first-party, privacy-conscious analytics to measure site and tool usage. No personally identifiable data or full IP addresses are stored. Page paths are sent without query strings (`useAnalytics` strips `?...`), and metadata keys containing `password` are rejected server-side. No advertising pixels, remarketing scripts, fingerprinting, or third-party marketing tags are loaded on any page, including `/privacy` and `/terms`.

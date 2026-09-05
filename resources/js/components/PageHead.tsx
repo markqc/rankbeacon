@@ -4,6 +4,7 @@ interface Props {
     title: string;
     description?: string;
     canonicalUrl?: string;
+    robots?: string;
     ogTitle?: string;
     ogDescription?: string;
     ogImage?: string;
@@ -15,6 +16,7 @@ export default function PageHead({
     title,
     description,
     canonicalUrl,
+    robots,
     ogTitle,
     ogDescription,
     ogImage,
@@ -25,6 +27,8 @@ export default function PageHead({
         <Head title={title}>
             {description && <meta name="description" content={description} />}
             <meta name="theme-color" content="#10233F" />
+
+            {robots && <meta name="robots" content={robots} />}
 
             {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
             {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}

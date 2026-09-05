@@ -13,6 +13,7 @@ interface Props {
     title: string;
     description?: string;
     canonicalUrl?: string;
+    robots?: string;
     ogTitle?: string;
     ogDescription?: string;
     ogImage?: string;
@@ -25,6 +26,7 @@ export default function MainLayout({
     title,
     description,
     canonicalUrl,
+    robots,
     ogTitle,
     ogDescription,
     ogImage,
@@ -47,6 +49,7 @@ export default function MainLayout({
                 title={title}
                 description={description}
                 canonicalUrl={resolvedCanonical}
+                robots={robots}
                 ogTitle={ogTitle}
                 ogDescription={ogDescription}
                 ogImage={ogImage}
