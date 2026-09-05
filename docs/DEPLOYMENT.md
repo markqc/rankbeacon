@@ -99,7 +99,19 @@ server {
 }
 ```
 
-### 7. Health check
+### 7. Seed the super admin
+
+Run the seeder to create the initial administrator:
+
+```sh
+php artisan db:seed --class=Database\\Seeders\\Admin\\SuperAdminSeeder
+```
+
+The seeder creates the `super_admin` role and the configured super-admin account (default email `mark@m-caneda.com`). If user ID `1` already exists with a different email, the seeder fails and requires manual cleanup before rerunning.
+
+> After seeding, sign in at `/admin/login` and immediately replace the temporary password through the forced password-change flow.
+
+### 8. Health check
 
 ```sh
 curl -s https://example.com/health/live
@@ -107,6 +119,14 @@ curl -s https://example.com/health/ready
 ```
 
 Both should return `200`.
+
+## Admin-area operational notes
+
+- Public storage is required for uploaded favicon and logo assets. Ensure `php artisan storage:link` has been run and `storage/app/public` is writable.
+- Database-driven mail settings are applied on every web request and queue job. After changing mail settings, restart queue workers so long-running processes pick up the new configuration.
+- The admin UI uses Inertia + React. Ensure `npm run build` has run and `public/build/` is deployed.
+- Admin activity is logged to `activity_logs`; retention is controlled by `ADMIN_ACTIVITY_LOG_RETENTION_DAYS` (default: 365 days).
+- Analytics data is retained for `ANALYTICS_RETENTION_DAYS` (default: 90 days).
 
 ## Repeat releases
 
@@ -191,6 +211,13 @@ Before deployment, confirm and record the following. Do not proceed until all it
 - [ ] Favicon and other production assets load.
 - [ ] `GET /health/live` and `GET /health/ready` return `200`.
 - [ ] `storage/logs/laravel.log` is writable and does not expose stack traces to clients.
+- [ ] `GET /admin/login` renders the split admin login page.
+- [ ] Seeded super admin can log in and is redirected to `/admin/dashboard`.
+- [ ] `/admin/dashboard`, `/admin/analytics`, `/admin/users`, `/admin/settings`, and `/admin/activity-logs` are accessible only to authenticated super admins.
+- [ ] `/admin/settings` can save General, Branding, Mail, and Analytics values.
+- [ ] A test email can be sent from `/admin/settings` and is recorded in the activity log.
+- [ ] Admin page views appear once per navigation in `/admin/activity-logs`.
+- [ ] Uploaded favicon is served correctly from `public/storage` and referenced in `<head>`.
 
 ## Deployment record
 

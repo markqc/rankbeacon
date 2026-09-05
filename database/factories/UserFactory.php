@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -29,6 +30,7 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            'password_changed_at' => now(),
             'remember_token' => Str::random(10),
         ];
     }
@@ -40,6 +42,29 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    public function superAdmin(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->roles()->syncWithoutDetaching(
+                Role::firstOrCreate(['name' => 'super_admin'], ['label' => 'Super Admin'])->id,
+            );
+        });
+    }
+
+    public function inactive(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'inactive',
+        ]);
+    }
+
+    public function temporaryPassword(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'password_changed_at' => null,
         ]);
     }
 }

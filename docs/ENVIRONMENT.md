@@ -36,8 +36,11 @@ All configuration is driven by `.env`. Copy `.env.example` to `.env` and fill an
 
 | Variable | Required | Example | Sensitive | Notes |
 |---|---|---|---|---|
-| `MAIL_MAILER` | Yes | `log` | No | |
+| `MAIL_MAILER` | Yes | `log` | No | Default mail driver |
 | `BROADCAST_CONNECTION` | Yes | `log` | No | |
 | `VITE_APP_NAME` | Yes | `${APP_NAME}` | No | Exposed to Vite build |
+| `SESSION_SECURE_COOKIE` | No | `true` | No | Force cookies over HTTPS in production |
+| `ADMIN_ACTIVITY_LOG_RETENTION_DAYS` | No | `365` | No | Activity-log retention period |
+| `ANALYTICS_RETENTION_DAYS` | No | `90` | No | Analytics retention period |
 
-Sensitive values (`APP_KEY`, `DB_PASSWORD`, `AWS_*`, `REDIS_PASSWORD`) must never be committed.
+Sensitive values (`APP_KEY`, `DB_PASSWORD`, `AWS_*`, `REDIS_PASSWORD`, `MAIL_PASSWORD`, `SMTP2GO_API_KEY`) must never be committed.

@@ -1,35 +1,42 @@
-# Security Policy
+# Security
 
-## Supported versions
+This document records the security review for the RankBeacon admin backend.
 
-Only the latest commit on the active development branch is supported. Pre-release and MVP versions are not covered by a long-term support policy.
+## Authentication and authorization
 
-## Reporting a vulnerability
+- Admin access requires `super_admin` role and an active account.
+- Passwords are hashed with Laravel's default `hashed` cast; temporary passwords force a password-change flow.
+- Login and test-email endpoints are rate-limited per IP/user.
+- Policies and gates prevent unauthorized user-management and settings changes.
+- Deactivated accounts are blocked on each request and active sessions are invalidated safely.
 
-If you discover a security issue, please contact the operator directly instead of opening a public issue. Include enough detail to reproduce the problem and any suggested remediation.
+## Input validation and mass assignment
 
-## Security controls
+- All admin mutations use Laravel Form Requests (`StoreUserRequest`, `UpdateUserRequest`, `UpdateSettingsRequest`, etc.).
+- File uploads are validated by type, extension, dimensions, and size.
+- `User` fillable fields exclude derived data such as `email_normalized`.
 
-The application implements the following defensive measures:
+## Sensitive data
 
-- **SSRF prevention**: URL validation, IP validation, DNS resolution, and `CURLOPT_RESOLVE` pinning for outbound fetches.
-- **CSRF protection**: Laravel CSRF tokens for all state-changing web routes.
-- **Rate limiting**: `30 requests/minute` per IP for the SERP fetch endpoint.
-- **Input validation**: Strict URL parsing, rejection of private/reserved IPs, embedded credentials, and non-HTTP schemes.
-- **Output escaping**: React escapes user content; no raw HTML is injected from user input.
-- **Security headers**: CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, and HSTS in production.
-- **Safe logging**: Logs contain only scheme, host, and path. Query strings and stack traces are not exposed to clients.
+- SMTP passwords and SMTP2GO API keys are encrypted at rest via `SettingsService`.
+- Secret fields are masked before being sent to React.
+- `SensitiveValueSanitizer` redacts sensitive keys from activity-log metadata.
+- No passwords, tokens, or mail credentials are logged or exposed in UI props.
 
-For full details, see `docs/SECURITY.md`.
+## Output and transport
 
-## Dependency and secret hygiene
+- React/Blade output escapes user data by default; no raw HTML is rendered from user input.
+- CSRF protection is enforced for all state-changing admin and public forms.
+- Analytics uses same-origin requests with CSRF validation and rate limiting.
+- `SESSION_SECURE_COOKIE` should be set to `true` in production to ensure cookies are sent only over HTTPS.
 
-- Run `composer audit` and `npm audit` before each release.
-- Never commit `.env`, API keys, or certificates.
-- Deploy with `APP_DEBUG=false` and `APP_ENV=production`.
+## Production hardening
 
-## Known limitations
+- Ensure `APP_ENV=production` and `APP_DEBUG=false` in production to disable debug output.
+- Run `php artisan config:cache` and `php artisan route:cache` to apply environment-based security configuration.
+- Restart queue workers after changing mail settings so workers pick up the current database-driven mail configuration.
 
-- The CSP currently allows `'unsafe-inline'` for scripts and styles. This is a deliberate MVP trade-off to support Inertia/Vite without nonces. Tighten this before handling sensitive data or user accounts.
-- `CURLOPT_RESOLVE` is cURL-specific. Verify DNS pinning if you deploy with a non-cURL HTTP handler.
-- The parser does not execute JavaScript, so client-rendered metadata may be missed.
+## Ongoing review
+
+- Activity logs and analytics retention commands run via `php artisan activity-log:prune` and `php artisan analytics:prune`.
+- Review `docs/ACTIVITY-LOGS.md` for the admin action coverage matrix and audit trail scope.

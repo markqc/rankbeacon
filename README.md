@@ -30,6 +30,19 @@ php artisan serve
 
 Visit `http://127.0.0.1:8000`.
 
+## Admin area
+
+RankBeacon includes a private admin area for site and operations management.
+
+- Login: `/admin/login`
+- Dashboard: `/admin/dashboard`
+- Analytics: `/admin/analytics`
+- Users: `/admin/users`
+- Settings: `/admin/settings`
+- Activity logs: `/admin/activity-logs`
+
+The initial super admin is created with `php artisan db:seed --class=Database\Seeders\Admin\SuperAdminSeeder`. Sign in and change the temporary password immediately.
+
 ## Development
 
 In separate terminals:
@@ -70,7 +83,10 @@ npm run build           # Production build
 - `docs/ROLLBACK.md` — rollback strategy
 - `docs/TROUBLESHOOTING.md` — common issues
 - `docs/SECURITY.md` — threat model and controls
-- `docs/QA-REPORT.md` — Phase 8 QA results and release blockers
+- `docs/SETTINGS.md` — system settings and mail modes
+- `docs/ACTIVITY-LOGS.md` — activity audit coverage and usage
+- `docs/PRIVACY-ANALYTICS.md` — analytics privacy and retention
+- `docs/QA-REPORT.md` — security, privacy, performance, and accessibility QA
 - `docs/HANDOVER.md` — final release status and next steps
 - `docs/BACKLOG.md` — post-MVP backlog
 - `CHANGELOG.md` — release history

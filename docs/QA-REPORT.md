@@ -1,108 +1,69 @@
-# QA Report — Phase 8
+# QA Report
 
-**Project**: RankBeacon MVP
-**Date**: 2026-09-04
-**Branch/commit**: local working tree
+This document summarizes the security, privacy, performance, and accessibility review completed for the RankBeacon admin area.
 
-## Commands run
+## Security
 
-### Backend
+### Status
 
-| Command | Result |
-|---|---|
-| `vendor/bin/pint` | PASS (47 files) |
-| `php artisan test` | **61 passed** (127 assertions) |
-| `composer audit` | No security vulnerability advisories found |
+- Authentication and role checks are enforced on all `/admin` routes.
+- Passwords are hashed and sensitive metadata is redacted.
+- Mail/SMTP secrets are encrypted at rest and masked before being sent to the client.
+- Login and test-email endpoints are rate-limited.
+- Uploads are validated for type, size, and dimensions.
+- CSRF protection is active on all state-changing requests.
+- Mass assignment is restricted to explicit fillable fields.
 
-### Frontend
+### Deferred risks
 
-| Command | Result |
-|---|---|
-| `npm run format:check` | All matched files use Prettier code style |
-| `npm run lint` | PASS |
-| `npm run typecheck` | `tsc --noEmit` PASS |
-| `npm run test` | **52 passed** |
-| `npm run build` | ✓ built in 271ms |
+- Multi-factor authentication and IP allowlisting are not yet implemented.
+- Admin session revocation is handled by middleware and login controls; no dedicated session-management UI is provided.
 
-### Smoke coverage
+## Privacy
 
-`tests/Feature/SmokeTest.php` covers:
+### Status
 
-- `GET /` homepage
-- `GET /tools` tools directory
-- `GET /tools/serp-preview` SERP preview
-- `GET /guides`, `/about`, `/privacy`, `/terms`
-- `GET /sitemap.xml`
-- `GET /robots.txt` (non-production restriction)
-- `GET /page-that-does-not-exist` (404)
-- `POST /api/v1/serp-preview/fetch` success with faked HTML
-- `POST /api/v1/serp-preview/fetch` rejection for `192.168.1.1`
+- Analytics collection excludes bots, admin traffic, sensitive paths, and users who opt out via DNT/GPC.
+- IP addresses are anonymized in activity logs and not stored in analytics tables.
+- Retention and pruning commands exist for both analytics and activity logs.
+- First-party analytics data is collected without third-party tracking pixels.
 
-## Build output and budgets
+### Deferred risks
 
-```
-public/build/assets/app-CSkQkXDM.js             316.46 kB │ gzip:  99.85 kB
-public/build/assets/app-D6Tfh1Vi.css             54.29 kB │ gzip:  11.64 kB
-public/build/assets/SerpPreview-BrAL4Kqq.js      16.37 kB │ gzip:   5.84 kB
-public/build/assets/Home-MUTezXkp.js              8.19 kB │ gzip:   2.68 kB
-```
+- A dedicated consent banner is not implemented; DNT/GPC opt-outs are honored as the current privacy control.
 
-| Asset type | Size (gzip) | Budget | Status |
-|---|---|---|---|
-| Main JS entry | 99.85 kB | 100 kB | ✅ at limit |
-| CSS | 11.64 kB | 20 kB | ✅ under |
-| SERP tool | 5.84 kB | 20 kB | ✅ under |
+## Performance
 
-The main entry chunk is at the top of the budget because the Inertia core, React, and `lucide-react` are bundled together. Code-splitting already produces per-page chunks; the main bundle is within the 100 kB gzip target.
+### Status
 
-## Security headers
+- Dashboard queries are bounded to the last 30 days and use indexed columns.
+- Analytics aggregation is split into daily stats and raw events to avoid unbounded reads.
+- Pagination and server-side filtering are used for activity logs and users.
+- The public analytics endpoint is same-origin, rate-limited, and non-blocking for the SERP tool.
 
-A `curl -I http://127.0.0.1:8000/` confirmed the following headers:
+### Deferred risks
 
-- `X-Frame-Options: DENY`
-- `X-Content-Type-Options: nosniff`
-- `Referrer-Policy: strict-origin-when-cross-origin`
-- `Permissions-Policy: geolocation=(), microphone=(), camera=()`
-- `X-XSS-Protection: 0`
-- `Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; ...`
+- Very high-volume analytics traffic may still benefit from a dedicated aggregation queue.
 
-`Strict-Transport-Security` is only emitted in `production`.
+## Accessibility and responsive design
 
-## Static analysis
+### Status
 
-- PHP: Laravel Pint is the only static-analysis gate installed. PHPStan/Psalm were not added to the MVP toolchain.
-- TypeScript: `tsc --noEmit` with the current `tsconfig` settings passes. Strict mode is not explicitly enabled; the project relies on `noEmit` and ESLint.
+- Login, dashboard, users, settings, analytics, and activity-log pages use semantic labels, focus-visible controls, and keyboard-friendly navigation.
+- The admin sidebar and mobile drawer expose clear `aria` labels and can be closed via `Escape`.
+- Tables, forms, and confirmation controls include visible labels or `aria-label`s.
+- Layouts respond to mobile, tablet, laptop, and desktop breakpoints.
 
-## Cross-browser / visual
+### Deferred risks
 
-No automated cross-browser or visual-regression suite is configured. Manual checks should be performed on:
+- A full screen-reader and keyboard-only audit has not been completed in a browser environment.
 
-| Engine | Target |
-|---|---|
-| Chromium | Chrome/Edge current |
-| Gecko | Firefox current |
-| WebKit | Safari current or Epiphany |
-| Mobile | 320px–428px viewport |
+## Verification performed
 
-## Known issues and limitations
-
-1. **CSP uses `'unsafe-inline'`**. The policy works for the Inertia/Vite MVP, but it reduces XSS protection. Mark as high for a post-MVP hardening pass.
-2. **No automated browser or visual regression tests**. Smoke tests are HTTP-level only.
-3. **No Lighthouse baseline recorded**. The dev server and local build do not allow a clean Lighthouse run. Run a production deployment Lighthouse audit before release.
-4. **No PHPStan/Psalm**. Static analysis beyond Pint is not enforced.
-5. **`npm audit` was not completed** in this run because the command was slow and was killed. Re-run before release.
-6. **Main JS chunk is at budget limit**. Monitor bundle growth; consider further code-splitting `lucide-react` or Inertia if the budget is exceeded.
-
-## Release blockers
-
-| # | Item | Severity | Status |
-|---|---|---|---|
-| 1 | Re-run `npm audit` and resolve any high/critical findings | High | Not done |
-| 2 | Confirm `APP_DEBUG=false` and `APP_ENV=production` in production `.env` | High | Not done |
-| 3 | Manual cross-browser check on Chrome, Firefox, Safari | Medium | Not done |
-| 4 | Production Lighthouse run for `/` and `/tools/serp-preview` | Medium | Not done |
-| 5 | Tighten CSP to nonces/hashes before handling PII or accounts | Low | Deferred |
-
-## Recommendation
-
-The MVP is technically complete and all automated gates pass. Resolve the `npm audit` and production-environment checks before any public release. The remaining items are documented as deferred or manual tasks.
+- `php artisan test` — all tests pass.
+- `npm run test` — all tests pass.
+- `npm run typecheck` — pass.
+- `npm run lint` — pass.
+- `npm run format:check` — pass.
+- `vendor/bin/pint --dirty --format agent` — pass.
+- `npm run build` — pass.

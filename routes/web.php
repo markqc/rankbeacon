@@ -1,5 +1,17 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\AnalyticsController;
+use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\Auth\LogoutController;
+use App\Http\Controllers\Admin\Auth\PasskeyLoginController;
+use App\Http\Controllers\Admin\Auth\PasswordChangeController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\PasskeyController;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Api\AnalyticsController as ApiAnalyticsController;
 use App\Http\Controllers\Api\SerpPreviewController;
 use App\Http\Controllers\HealthController;
 use Illuminate\Http\Request;
@@ -48,6 +60,48 @@ Route::get('/sitemap.xml', function () {
 Route::post('/api/v1/serp-preview/fetch', SerpPreviewController::class)
     ->middleware('throttle:serp-fetch')
     ->name('api.serp-preview.fetch');
+
+Route::post('/api/analytics/event', [ApiAnalyticsController::class, 'store'])
+    ->middleware('throttle:analytics-event')
+    ->name('analytics.event');
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('admin.guest')->group(function () {
+        Route::get('login', [LoginController::class, 'create'])->name('login');
+        Route::post('login', [LoginController::class, 'store'])->middleware('throttle:admin-login')->name('login.store');
+        Route::post('login/passkey/options', [PasskeyLoginController::class, 'options'])->middleware('throttle:admin-login')->name('login.passkey.options');
+        Route::post('login/passkey', [PasskeyLoginController::class, 'store'])->middleware('throttle:admin-login')->name('login.passkey');
+    });
+
+    Route::middleware(['auth', 'admin.active', 'can:admin.access', 'admin.log-page-view'])->group(function () {
+        Route::post('logout', LogoutController::class)->name('logout');
+
+        Route::get('password/change', [PasswordChangeController::class, 'edit'])->name('password.change.edit');
+        Route::patch('password/change', [PasswordChangeController::class, 'update'])->name('password.change.update');
+    });
+
+    Route::middleware(['auth', 'admin.active', 'can:admin.access', 'admin.password-changed', 'admin.log-page-view'])->group(function () {
+        Route::get('/', fn () => redirect()->route('admin.dashboard'))->name('index');
+        Route::get('dashboard', DashboardController::class)->name('dashboard');
+        Route::get('analytics', AnalyticsController::class)->name('analytics');
+        Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('profile/sessions/{sessionId}', [ProfileController::class, 'destroySession'])->name('profile.sessions.destroy');
+        Route::post('profile/passkeys/options', [PasskeyController::class, 'options'])->name('profile.passkeys.options');
+        Route::post('profile/passkeys', [PasskeyController::class, 'store'])->name('profile.passkeys.store');
+        Route::delete('profile/passkeys/{passkey}', [PasskeyController::class, 'destroy'])->name('profile.passkeys.destroy');
+        Route::resource('users', UserController::class);
+        Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+        Route::post('users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
+        Route::get('settings', [SettingsController::class, 'edit'])->name('settings.edit');
+        Route::patch('settings', [SettingsController::class, 'update'])->name('settings.update');
+        Route::post('settings/test-email', [SettingsController::class, 'sendTestEmail'])->name('settings.test-email');
+        Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+        Route::get('activity-logs/{activityLog}', [ActivityLogController::class, 'show'])->name('activity-logs.show');
+    });
+});
+
+Route::redirect('/login', '/admin/login', 302)->name('login');
 
 Route::inertia('/', 'Home')->name('home');
 Route::inertia('/tools', 'Tools/Index')->name('tools.index');

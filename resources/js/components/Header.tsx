@@ -6,6 +6,8 @@ import Lighthouse from './icons/Lighthouse';
 
 interface Props {
     currentUrl: string;
+    siteName: string;
+    tagline: string;
 }
 
 interface NavItem {
@@ -24,7 +26,7 @@ function isActive(currentUrl: string, href: string): boolean {
     return currentUrl === href || currentUrl.startsWith(`${href}/`);
 }
 
-export default function Header({ currentUrl }: Props) {
+export default function Header({ currentUrl, siteName, tagline }: Props) {
     const [menuOpen, setMenuOpen] = useState(false);
 
     return (
@@ -33,10 +35,8 @@ export default function Header({ currentUrl }: Props) {
                 <Link href="/" className="flex items-center gap-2 rounded-lg">
                     <Lighthouse className="h-8 w-8" />
                     <div className="flex flex-col">
-                        <span className="text-xl font-bold text-navy-950">RankBeacon</span>
-                        <span className="hidden text-xs text-slate-500 sm:block">
-                            SEO Tools by Authority Lighthouse
-                        </span>
+                        <span className="text-xl font-bold text-navy-950">{siteName}</span>
+                        <span className="hidden text-xs text-slate-500 sm:block">{tagline}</span>
                     </div>
                 </Link>
 

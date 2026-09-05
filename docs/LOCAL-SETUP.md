@@ -37,6 +37,8 @@ DB_CONNECTION=sqlite
 CACHE_STORE=database
 SESSION_DRIVER=database
 QUEUE_CONNECTION=database
+ADMIN_ACTIVITY_LOG_RETENTION_DAYS=365
+ANALYTICS_RETENTION_DAYS=90
 ```
 
 ## Database
@@ -78,14 +80,33 @@ php artisan serve --host=127.0.0.1 --port=8000
 
 Visit `http://127.0.0.1:8000`.
 
+## Admin setup
+
+Create the initial super-admin account. This command is idempotent and safe to re-run.
+
+```sh
+php artisan db:seed --class="Database\\Seeders\\Admin\\SuperAdminSeeder"
+```
+
+Then sign in at `/admin/login` with:
+
+- Email: `mark@m-caneda.com`
+- Password: `!Password1234`
+
+You will be forced to change the temporary password before accessing the admin dashboard.
+
+**Production warning:** do not add this seeder to an automated deployment pipeline or call it automatically in production. It stores a known temporary password that must be changed immediately after the first login.
+
 ## Verification
 
 ```sh
 php artisan test
 npm run test
-vendor/bin/pint
-npm run lint
 npm run typecheck
+npm run lint
+npm run format:check
+vendor/bin/pint --dirty --format agent
+npm run build
 ```
 
 All should pass.
