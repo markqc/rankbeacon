@@ -22,28 +22,44 @@ import LinkButton from '../components/LinkButton';
 import SectionHeading from '../components/SectionHeading';
 import MainLayout from '../layouts/MainLayout';
 import type { PageProps } from '../types';
+import HeroBackground from '../components/HeroBackground';
 
 function HeroPreview({ previewUrl }: { previewUrl: string }) {
     const displayUrl = previewUrl.replace(/^https?:\/\//, '');
+    const query = 'how does my page look in google';
 
     return (
-        <Card className="w-full max-w-xl shadow-lg" data-reveal="true">
-            <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-                <Search className="h-4 w-4 text-slate-400" aria-hidden="true" />
-                <span className="text-sm text-slate-500">how does my page look in google</span>
-            </div>
-            <div className="mt-4 space-y-1">
-                <p className="text-xs text-slate-500">{displayUrl}</p>
-                <p className="text-lg font-medium text-blue-700">SERP Preview — RankBeacon</p>
-                <p className="text-sm leading-relaxed text-slate-700">
-                    Preview your title and description before searchers see them.
-                </p>
-                <div className="mt-2 flex gap-3 text-xs text-slate-500">
-                    <span>SERP Preview</span>
-                    <span>Meta Tags</span>
+        <div className="relative z-0" data-reveal="true">
+            <div
+                className="pointer-events-none absolute -inset-10 -z-10 rounded-full bg-teal-400/25 blur-2xl animate-hero-pulse-glow"
+                aria-hidden="true"
+            />
+            <Card className="relative z-10 w-full max-w-xl animate-hero-float shadow-lg">
+                <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+                    <Search className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                    <span aria-hidden="true" className="flex items-center gap-0.5">
+                        <span className="animate-hero-type whitespace-nowrap text-sm text-slate-500" aria-hidden="true">
+                            {query}
+                        </span>
+                        <span className="animate-hero-blink text-sm text-slate-500" aria-hidden="true">
+                            |
+                        </span>
+                    </span>
+                    <span className="sr-only">{query}</span>
                 </div>
-            </div>
-        </Card>
+                <div className="mt-4 space-y-1">
+                    <p className="text-xs text-slate-500">{displayUrl}</p>
+                    <p className="text-lg font-medium text-blue-700">SERP Preview — RankBeacon</p>
+                    <p className="text-sm leading-relaxed text-slate-700">
+                        Preview your title and description before searchers see them.
+                    </p>
+                    <div className="mt-2 flex gap-3 text-xs text-slate-500">
+                        <span>SERP Preview</span>
+                        <span>Meta Tags</span>
+                    </div>
+                </div>
+            </Card>
+        </div>
     );
 }
 
@@ -212,8 +228,9 @@ export default function Home() {
             ogDescription={description}
             jsonLd={jsonLd}
         >
-            <section className="bg-pale-50 py-16 lg:py-24">
-                <Container>
+            <section className="relative overflow-hidden bg-pale-50 py-16 lg:py-24">
+                <HeroBackground />
+                <Container className="relative z-10">
                     <div className="grid items-center gap-12 lg:grid-cols-2">
                         <div className="max-w-2xl" data-reveal="true">
                             <span className="inline-block rounded-full bg-teal-100 px-3 py-1 text-xs font-semibold text-teal-700">
