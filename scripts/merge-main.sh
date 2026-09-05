@@ -105,7 +105,7 @@ DEV_MSG=$(git log -1 --format=%s "$DEV_BRANCH") || fail "Could not read dev bran
 
 MERGE_MSG_FILE=$(mktemp)
 printf '%s\n' "$DEV_MSG" > "$MERGE_MSG_FILE"
-run_with_spinner "Merging dev into main" git merge -F "$MERGE_MSG_FILE" "$DEV_BRANCH"
+run_with_spinner "Merging dev into main" git merge --no-ff -F "$MERGE_MSG_FILE" "$DEV_BRANCH"
 MERGE_CODE=$?
 rm -f "$MERGE_MSG_FILE"
 [ $MERGE_CODE -eq 0 ] || fail "Merge from dev failed."
