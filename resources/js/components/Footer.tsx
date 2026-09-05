@@ -1,8 +1,10 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import type { PageProps } from '../types';
 import { currentYear } from '../utils/footerYear';
 import Container from './Container';
 
 export default function Footer() {
+    const { branding } = usePage<PageProps>().props;
     const year = currentYear();
 
     const links = [
@@ -19,8 +21,8 @@ export default function Footer() {
             <Container>
                 <div className="flex flex-col gap-6 py-8 md:flex-row md:items-start md:justify-between">
                     <div>
-                        <p className="font-semibold text-navy-950">RankBeacon</p>
-                        <p>SEO Tools by Authority Lighthouse</p>
+                        <p className="font-semibold text-navy-950">{branding.site_name}</p>
+                        <p>{branding.tagline}</p>
                     </div>
                     <nav aria-label="Footer">
                         <ul className="flex flex-wrap gap-4">

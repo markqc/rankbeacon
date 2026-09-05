@@ -2,23 +2,36 @@ import type { ReactNode } from 'react';
 
 interface Props {
     label: string;
-    htmlFor: string;
+    htmlFor?: string;
     error?: string;
     hint?: string;
     required?: boolean;
+    hideLabel?: boolean;
+    className?: string;
     children: ReactNode;
 }
 
-export default function FormField({ label, htmlFor, error, hint, required, children }: Props) {
+export default function FormField({
+    label,
+    htmlFor,
+    error,
+    hint,
+    required,
+    hideLabel = false,
+    className = '',
+    children,
+}: Props) {
     const errorId = `${htmlFor}-error`;
     const hintId = `${htmlFor}-hint`;
 
     return (
-        <div className="space-y-1.5">
-            <label htmlFor={htmlFor} className="block text-sm font-medium text-slate-700">
-                {label}
-                {required && <span aria-hidden="true"> *</span>}
-            </label>
+        <div className={`space-y-1.5 ${className}`}>
+            {!hideLabel && (
+                <label htmlFor={htmlFor} className="block text-sm font-medium text-slate-700">
+                    {label}
+                    {required && <span aria-hidden="true"> *</span>}
+                </label>
+            )}
             {hint && (
                 <p className="text-xs text-slate-500" id={hintId}>
                     {hint}

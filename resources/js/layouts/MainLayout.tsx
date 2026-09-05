@@ -4,6 +4,8 @@ import Footer from '../components/Footer';
 import Header from '../components/Header';
 import PageHead from '../components/PageHead';
 import SkipLink from '../components/SkipLink';
+import { useAnalytics } from '../hooks/useAnalytics';
+import { useFavicon } from '../hooks/useFavicon';
 import type { PageProps } from '../types';
 
 interface Props {
@@ -34,6 +36,11 @@ export default function MainLayout({
     const path = url.split('?')[0];
     const resolvedCanonical = canonicalUrl ?? `${baseUrl}${path}`;
 
+    useAnalytics(path);
+    useFavicon(props.branding.favicon_path);
+
+    const { site_name: siteName, tagline } = props.branding;
+
     return (
         <div className="flex min-h-screen flex-col bg-white font-sans antialiased text-slate-900">
             <PageHead
@@ -47,7 +54,7 @@ export default function MainLayout({
                 jsonLd={jsonLd}
             />
             <SkipLink />
-            <Header currentUrl={url} />
+            <Header currentUrl={url} siteName={siteName} tagline={tagline} />
             <main id="main-content" className="flex-1 focus:outline-none" tabIndex={-1}>
                 {children}
             </main>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Domain\Analytics\Services\AnalyticsTracker;
 use App\Domain\SeoTools\Exceptions\FetchException;
 use App\Domain\SeoTools\Exceptions\UnsafeUrlException;
 use App\Domain\SeoTools\Services\UrlMetadataFetcher;
@@ -16,6 +17,7 @@ class SerpPreviewController extends Controller
 {
     public function __construct(
         private readonly UrlMetadataFetcher $fetcher,
+        private readonly AnalyticsTracker $tracker,
     ) {}
 
     public function __invoke(Request $request): JsonResponse
@@ -30,6 +32,13 @@ class SerpPreviewController extends Controller
 
         try {
             $metadata = $this->fetcher->fetch($request->input('url'));
+
+            $this->tracker->trackToolEvent(
+                $request->merge(['path' => '/tools/serp-preview']),
+                'serp-preview',
+                'fetch',
+                ['url' => $request->input('url')],
+            );
 
             return response()->json([
                 'data' => $metadata->toArray(),

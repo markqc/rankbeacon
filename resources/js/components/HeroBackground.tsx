@@ -42,18 +42,10 @@ export default function HeroBackground() {
                 />
 
                 <circle r="3" fill="#0ea5a8" filter="url(#signal-glow)" className="motion-reduce:hidden">
-                    <animateMotion
-                        dur="12s"
-                        repeatCount="indefinite"
-                        path="M 520 40 C 660 40, 700 160, 830 260"
-                    />
+                    <animateMotion dur="12s" repeatCount="indefinite" path="M 520 40 C 660 40, 700 160, 830 260" />
                 </circle>
                 <circle r="3" fill="#0ea5a8" filter="url(#signal-glow)" className="motion-reduce:hidden">
-                    <animateMotion
-                        dur="14s"
-                        repeatCount="indefinite"
-                        path="M 520 560 C 660 560, 700 420, 830 320"
-                    />
+                    <animateMotion dur="14s" repeatCount="indefinite" path="M 520 560 C 660 560, 700 420, 830 320" />
                 </circle>
             </g>
 
@@ -74,18 +66,10 @@ export default function HeroBackground() {
                 />
 
                 <circle r="3" fill="#0ea5a8" filter="url(#signal-glow)" className="motion-reduce:hidden">
-                    <animateMotion
-                        dur="10s"
-                        repeatCount="indefinite"
-                        path="M 620 120 C 720 120, 760 200, 830 260"
-                    />
+                    <animateMotion dur="10s" repeatCount="indefinite" path="M 620 120 C 720 120, 760 200, 830 260" />
                 </circle>
                 <circle r="3" fill="#0ea5a8" filter="url(#signal-glow)" className="motion-reduce:hidden">
-                    <animateMotion
-                        dur="11s"
-                        repeatCount="indefinite"
-                        path="M 620 480 C 720 480, 760 380, 830 320"
-                    />
+                    <animateMotion dur="11s" repeatCount="indefinite" path="M 620 480 C 720 480, 760 380, 830 320" />
                 </circle>
             </g>
         </svg>

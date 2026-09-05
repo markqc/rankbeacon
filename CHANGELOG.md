@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.1.0 — 2026-09-06
+
+### Added
+
+- Private admin area with authentication, dashboard, analytics, settings, user management, and activity logs.
+- Database-backed settings with encrypted secrets, runtime mail configuration, and SMTP2GO support.
+- Privacy-conscious analytics with bot/admin exclusion, DNT/GPC opt-outs, and retention pruning.
+- Security hardening, accessibility improvements, and cross-module integration tests.
+
+### Changed
+
+- Admin branding, site name, and favicon are now configured through settings instead of static config.
+
 ## 1.0.0-MVP — 2026-09-04
 
 ### Added

@@ -17,6 +17,13 @@ vi.mock('@inertiajs/react', () => ({
                 name: 'RankBeacon',
                 env: 'testing',
             },
+            branding: {
+                site_name: 'RankBeacon',
+                tagline: 'SEO Tools by Authority Lighthouse',
+                logo_path: null,
+                favicon_path: null,
+                primary_color: '#0f172a',
+            },
         },
     }),
 }));

@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Domain\SeoTools\Services\Contracts\DnsResolverInterface;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class SmokeTest extends TestCase
 {
+    use RefreshDatabase;
+
     private string $token = 'test-csrf-token';
 
     protected function setUp(): void

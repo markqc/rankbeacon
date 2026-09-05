@@ -6,6 +6,7 @@
 - `GET /health/ready` — database connectivity
 - Error log `storage/logs/laravel.log` for `Fetch error`, `PRIVATE_IP`, `TOO_MANY_REDIRECTS`
 - Rate-limited `429` responses on `/api/v1/serp-preview/fetch`
+- Admin login failures in `activity_logs` (event `failed_login`)
 
 ## Cache
 
@@ -26,6 +27,16 @@ php artisan tinker
 
 Sessions are stored in the configured session driver (`database` or `redis`). Restarting the app server does not invalidate sessions.
 
+Deactivated accounts are blocked on each request and their active sessions are invalidated safely by `Admin\ActiveAccount` middleware.
+
+## Admin management
+
+- Visit `/admin/login` and sign in with the seeded super-admin account.
+- Change the temporary password immediately on first sign-in.
+- User accounts, roles, and status can be managed at `/admin/users`.
+- Site name, tagline, branding, mail, and analytics settings are managed at `/admin/settings`.
+- Admin activity can be reviewed and filtered at `/admin/activity-logs`.
+
 ## Logs
 
 | Log path | Purpose |
@@ -38,6 +49,27 @@ Configure a central log aggregator in production to alert on:
 - Repeated `PRIVATE_IP` attempts
 - Repeated `AMBIGUOUS_HOST` attempts
 - Repeated `TOO_MANY_REDIRECTS` attempts
+
+## Retention and pruning
+
+Analytics and activity data can be pruned manually or by scheduler:
+
+```sh
+php artisan analytics:prune --days=90 --dry-run
+php artisan analytics:prune
+php artisan activity-log:prune --days=365 --dry-run
+php artisan activity-log:prune
+```
+
+## Queues and mail
+
+Database-driven mail settings are applied on every request and queue job via `MailSettingsService`. After changing mail settings in `/admin/settings`, restart queue workers:
+
+```sh
+php artisan queue:restart
+```
+
+To test mail delivery, use the **Send test email** action on the settings page. The result is recorded in the activity log.
 
 ## Rate-limit monitoring
 
@@ -74,6 +106,18 @@ Use these for uptime monitoring and load-balancer health probes.
 | Rotate logs | Weekly | `logrotate` or similar |
 | Backup database | Daily | See `docs/BACKUP-RESTORE.md` |
 | Test restore | Monthly | See `docs/BACKUP-RESTORE.md` |
+
+## Troubleshooting
+
+| Symptom | Check |
+|---|---|
+| Cannot log in to `/admin` | Confirm the user exists, has `super_admin` role, and is active; check `activity_logs` for `failed_login` and rate limiting. |
+| Admin pages return 403 | Confirm the user has `super_admin` and `status=active`. |
+| Favicon/logo not loading | Ensure `php artisan storage:link` has run and `storage/app/public` is writable. |
+| Mail settings not applying | Restart queue workers (`php artisan queue:restart`) and confirm the mail mode is saved in `/admin/settings`. |
+| Test email fails | Check `activity_logs` for the `settings` module and verify host/port/credentials without exposing secrets. |
+| Analytics data missing | Verify the page is not an excluded path, the user is not an admin, and `DNT`/`Sec-GPC` is not set. |
+| Old data not pruned | Confirm the scheduler is running and `ADMIN_ACTIVITY_LOG_RETENTION_DAYS` / `ANALYTICS_RETENTION_DAYS` are configured. |
 
 ## Incident contact
 

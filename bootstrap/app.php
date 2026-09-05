@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Middleware\Admin\ActiveAccount;
+use App\Http\Middleware\Admin\EnsurePasswordChanged;
+use App\Http\Middleware\Admin\LogAdminPageView;
+use App\Http\Middleware\Admin\RedirectIfAuthenticatedAdmin;
+use App\Http\Middleware\ApplyMailSettings;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SecurityHeadersMiddleware;
 use Illuminate\Foundation\Application;
@@ -16,8 +21,16 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
+            ApplyMailSettings::class,
             HandleInertiaRequests::class,
             SecurityHeadersMiddleware::class,
+        ]);
+
+        $middleware->alias([
+            'admin.guest' => RedirectIfAuthenticatedAdmin::class,
+            'admin.active' => ActiveAccount::class,
+            'admin.password-changed' => EnsurePasswordChanged::class,
+            'admin.log-page-view' => LogAdminPageView::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
