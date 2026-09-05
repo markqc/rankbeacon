@@ -11,6 +11,7 @@ export const SERP_FONTS = {
 export const SERP_THRESHOLDS: Record<
     Device,
     {
+        titleMax: number;
         titleMaxWidth: number;
         titleWarningRatio: number;
         descMaxWidth: number;
@@ -23,7 +24,8 @@ export const SERP_THRESHOLDS: Record<
     }
 > = {
     desktop: {
-        titleMaxWidth: 580,
+        titleMax: 600,
+        titleMaxWidth: 600,
         titleWarningRatio: 0.8,
         descMaxWidth: 600,
         descMaxLines: 99,
@@ -34,7 +36,8 @@ export const SERP_THRESHOLDS: Record<
         previewWidth: 600,
     },
     mobile: {
-        titleMaxWidth: 340,
+        titleMax: 805,
+        titleMaxWidth: 360,
         titleWarningRatio: 0.8,
         descMaxWidth: 360,
         descMaxLines: 99,

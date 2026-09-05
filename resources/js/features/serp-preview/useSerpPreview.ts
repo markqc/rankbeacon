@@ -38,14 +38,18 @@ export function useSerpPreview(initial: SerpState = SAMPLE) {
     );
 
     const titleWidth = useMemo(() => measureText(state.title, SERP_FONTS.title, measure), [state.title, measure]);
-    const titleMax = thresholds.titleMaxWidth;
+    const titleMax = thresholds.titleMax;
+    const titleMaxWidth = thresholds.titleMaxWidth;
     const titleStatus = useMemo(
         () => classify(titleWidth, titleMax, thresholds.titleWarningRatio),
         [titleWidth, titleMax, thresholds.titleWarningRatio],
     );
     const titleTruncated = useMemo(
-        () => (titleWidth > titleMax ? truncateToWidth(state.title, titleMax, SERP_FONTS.title, measure) : state.title),
-        [state.title, titleWidth, titleMax, measure],
+        () =>
+            titleWidth > titleMaxWidth
+                ? truncateToWidth(state.title, titleMaxWidth, SERP_FONTS.title, measure)
+                : state.title,
+        [state.title, titleWidth, titleMaxWidth, measure],
     );
 
     const descriptionWidth = useMemo(

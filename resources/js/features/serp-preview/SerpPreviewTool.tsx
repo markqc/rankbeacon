@@ -1,4 +1,4 @@
-import { Monitor, Smartphone } from 'lucide-react';
+import { Monitor, MoreVertical, Smartphone } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import Alert from '../../components/Alert';
 import Badge from '../../components/Badge';
@@ -392,26 +392,29 @@ export default function SerpPreviewTool() {
 
                 <Card className={`${previewMaxWidth} w-full`}>
                     <div className="space-y-1">
-                        <div className="flex min-w-0 gap-2">
-                            <div className="flex h-7 w-7 flex-shrink-0 items-start pt-0.5">
+                        <div className="flex min-w-0 gap-3">
+                            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-slate-100">
                                 {state.faviconUrl && !faviconImageError ? (
                                     <img
                                         src={state.faviconUrl}
                                         alt=""
-                                        className="h-7 w-7 object-contain"
+                                        className="h-5 w-5 object-contain"
                                         loading="lazy"
                                         onError={() => setFaviconImageError(true)}
                                     />
                                 ) : (
-                                    FaviconIcon && <FaviconIcon className="h-7 w-7 text-navy-950" aria-hidden="true" />
+                                    FaviconIcon && <FaviconIcon className="h-5 w-5 text-navy-950" aria-hidden="true" />
                                 )}
                             </div>
-                            <div className="flex min-w-0 flex-col">
+                            <div className="flex min-w-0 flex-1 flex-col">
                                 <div className="truncate text-[14px] text-slate-900" dir="auto">
                                     {state.siteName || formattedUrl.domain}
                                 </div>
-                                <div className="min-w-0 truncate text-[14px] text-green-700" dir="auto">
-                                    {formattedUrl.displayUrl}
+                                <div className="flex min-w-0 items-center gap-1 text-[14px] text-green-700">
+                                    <span className="min-w-0 truncate" dir="auto">
+                                        {formattedUrl.displayUrl}
+                                    </span>
+                                    <MoreVertical className="h-3 w-3 flex-shrink-0 text-slate-500" aria-hidden="true" />
                                 </div>
                             </div>
                         </div>
