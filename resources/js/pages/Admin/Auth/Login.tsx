@@ -1,4 +1,4 @@
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { Eye, EyeOff, Fingerprint } from 'lucide-react';
 import { useState } from 'react';
 import Alert from '../../../components/Alert';
@@ -188,6 +188,11 @@ export default function Login() {
                                     {passkeyError && (
                                         <p className="mt-2 text-center text-xs text-red-600">{passkeyError}</p>
                                     )}
+                                    <div className="mt-4 text-center">
+                                        <Link href="/" className="text-sm text-slate-500 hover:text-slate-700">
+                                            Go to landing page
+                                        </Link>
+                                    </div>
                                 </div>
                             )}
                         </div>
