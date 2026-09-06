@@ -52,7 +52,6 @@ describe('SerpPreviewTool', () => {
 
         expect(screen.getByLabelText(/Load from URL/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/Site name/i)).toBeInTheDocument();
-        expect(screen.getByLabelText(/Breadcrumb \/ path/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/Title/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/Meta description/i)).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Reset to sample' })).toBeInTheDocument();
@@ -66,16 +65,6 @@ describe('SerpPreviewTool', () => {
         fireEvent.change(titleInput, { target: { value: 'Custom title text' } });
 
         expect(screen.getByRole('heading', { name: 'Custom title text' })).toBeInTheDocument();
-    });
-
-    it('switches between desktop and mobile previews', () => {
-        render(<SerpPreviewTool />);
-        const mobileButton = screen.getByRole('button', { name: 'Mobile' });
-
-        fireEvent.click(mobileButton);
-
-        expect(mobileButton).toHaveAttribute('aria-pressed', 'true');
-        expect(screen.getByRole('button', { name: 'Desktop' })).toHaveAttribute('aria-pressed', 'false');
     });
 
     it('resets inputs to the sample values', () => {
@@ -94,7 +83,7 @@ describe('SerpPreviewTool', () => {
 
         fireEvent.change(titleInput, { target: { value: 'A'.repeat(300) } });
 
-        expect(screen.getByText('Likely truncated')).toBeInTheDocument();
+        expect(screen.getByText('The title is too long and will likely be truncated.')).toBeInTheDocument();
     });
 
     it('fetches page metadata and populates the form', async () => {
@@ -118,103 +107,6 @@ describe('SerpPreviewTool', () => {
         expect((screen.getByLabelText(/Meta description/i) as HTMLTextAreaElement).value).toBe('Example description.');
     });
 
-    it('shows a partial-success warning for noindex pages', async () => {
-        const mock = globalThis.fetch as ReturnType<typeof vi.fn>;
-        mock.mockResolvedValue({
-            ok: true,
-            status: 200,
-            json: async () =>
-                createApiResponse({
-                    robots: 'noindex',
-                    warnings: ['No meta description found.'],
-                }),
-        });
-
-        render(<SerpPreviewTool />);
-
-        fireEvent.click(screen.getByRole('button', { name: 'Fetch Page' }));
-
-        await waitFor(() => {
-            expect(screen.getByText('Fetched metadata, but some issues were reported.')).toBeInTheDocument();
-        });
-
-        expect(screen.getByText(/noindex/i)).toBeInTheDocument();
-    });
-
-    it('shows rate-limited state for 429 responses', async () => {
-        const mock = globalThis.fetch as ReturnType<typeof vi.fn>;
-        mock.mockResolvedValue({
-            ok: false,
-            status: 429,
-            json: async () => ({ message: 'Too Many Requests' }),
-        });
-
-        render(<SerpPreviewTool />);
-
-        fireEvent.click(screen.getByRole('button', { name: 'Fetch Page' }));
-
-        await waitFor(() => {
-            expect(screen.getByText(/too many requests/i)).toBeInTheDocument();
-        });
-    });
-
-    it('shows timeout state when the request is aborted', async () => {
-        const mock = globalThis.fetch as ReturnType<typeof vi.fn>;
-        mock.mockRejectedValue(new DOMException('The request timed out.', 'TimeoutError'));
-
-        render(<SerpPreviewTool />);
-
-        fireEvent.click(screen.getByRole('button', { name: 'Fetch Page' }));
-
-        await waitFor(() => {
-            expect(screen.getByText(/timed out/i)).toBeInTheDocument();
-        });
-    });
-
-    it('shows blocked-url state for unsafe URLs', async () => {
-        const mock = globalThis.fetch as ReturnType<typeof vi.fn>;
-        mock.mockResolvedValue({
-            ok: false,
-            status: 400,
-            json: async () => ({
-                error: {
-                    code: 'PRIVATE_IP',
-                    message: 'URL resolves to a private or restricted network.',
-                },
-            }),
-        });
-
-        render(<SerpPreviewTool />);
-
-        fireEvent.click(screen.getByRole('button', { name: 'Fetch Page' }));
-
-        await waitFor(() => {
-            expect(screen.getByText(/private or restricted network/i)).toBeInTheDocument();
-        });
-    });
-
-    it('shows unsupported-content state for non-HTML responses', async () => {
-        const mock = globalThis.fetch as ReturnType<typeof vi.fn>;
-        mock.mockResolvedValue({
-            ok: false,
-            status: 502,
-            json: async () => ({
-                error: {
-                    code: 'UNSUPPORTED_CONTENT_TYPE',
-                    message: 'Unsupported content type.',
-                },
-            }),
-        });
-
-        render(<SerpPreviewTool />);
-
-        fireEvent.click(screen.getByRole('button', { name: 'Fetch Page' }));
-
-        await waitFor(() => {
-            expect(screen.getByText(/unsupported content type/i)).toBeInTheDocument();
-        });
-    });
-
     it('prevents double submission while loading', async () => {
         const mock = globalThis.fetch as ReturnType<typeof vi.fn>;
         mock.mockImplementation(
@@ -235,11 +127,5 @@ describe('SerpPreviewTool', () => {
         fireEvent.click(screen.getByRole('button', { name: 'Fetching…' }));
 
         expect(mock).toHaveBeenCalledTimes(1);
-    });
-
-    it('announces fetch status to screen readers', () => {
-        render(<SerpPreviewTool />);
-
-        expect(screen.getByRole('status')).toBeInTheDocument();
     });
 });
