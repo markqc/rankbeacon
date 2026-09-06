@@ -23,7 +23,7 @@ export function useSerpPreview(initial: SerpState = SAMPLE) {
         setState((prev) => ({
             ...prev,
             url: data.final_url || data.normalized_url || prev.url,
-            siteName: data.site_name ?? '',
+            siteName: '',
             title: data.title ?? '',
             description: data.description ?? '',
             breadcrumb: data.breadcrumb_path ?? '',
