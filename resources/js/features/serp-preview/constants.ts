@@ -7,6 +7,9 @@ export const SERP_FONTS = {
     url: '14px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
 };
 
+export const TITLE_MIN_CHARS = 9;
+export const DESCRIPTION_MIN_CHARS = 14;
+
 export const SERP_THRESHOLDS: Record<
     Device,
     {

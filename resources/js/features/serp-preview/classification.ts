@@ -1,4 +1,4 @@
-export type Status = 'safe' | 'warning' | 'truncated';
+export type Status = 'safe' | 'short' | 'warning' | 'truncated';
 
 export function classify(width: number, max: number, warningRatio = 0.8): Status {
     if (width > max) return 'truncated';
@@ -10,6 +10,7 @@ export function statusTone(status: Status): 'success' | 'warning' | 'danger' {
     switch (status) {
         case 'safe':
             return 'success';
+        case 'short':
         case 'warning':
             return 'warning';
         case 'truncated':
@@ -21,6 +22,8 @@ export function statusLabel(status: Status): string {
     switch (status) {
         case 'safe':
             return 'Within range';
+        case 'short':
+            return 'Too short';
         case 'warning':
             return 'Approaching limit';
         case 'truncated':

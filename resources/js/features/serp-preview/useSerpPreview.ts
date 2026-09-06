@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { classify } from './classification';
-import { SAMPLE, SERP_FONTS, SERP_THRESHOLDS } from './constants';
+import { DESCRIPTION_MIN_CHARS, SAMPLE, SERP_FONTS, SERP_THRESHOLDS, TITLE_MIN_CHARS } from './constants';
 import { formatUrl } from './formatting';
 import { createCanvasMeasurer, measureText, splitDescriptionOverflow, truncateToWidth } from './textMeasurement';
 import { isSafeFaviconUrl } from './api';
@@ -40,10 +40,12 @@ export function useSerpPreview(initial: SerpState = SAMPLE) {
     const titleWidth = useMemo(() => measureText(state.title, SERP_FONTS.title, measure), [state.title, measure]);
     const titleMax = thresholds.titleMax;
     const titleMaxWidth = thresholds.titleMaxWidth;
-    const titleStatus = useMemo(
-        () => classify(titleWidth, titleMax, thresholds.titleWarningRatio),
-        [titleWidth, titleMax, thresholds.titleWarningRatio],
-    );
+    const titleStatus = useMemo(() => {
+        if (state.title.length > 0 && state.title.length <= TITLE_MIN_CHARS) {
+            return 'short';
+        }
+        return classify(titleWidth, titleMax, thresholds.titleWarningRatio);
+    }, [state.title.length, titleWidth, titleMax, thresholds.titleWarningRatio]);
     const titleTruncated = useMemo(
         () =>
             titleWidth > titleMaxWidth
@@ -58,10 +60,12 @@ export function useSerpPreview(initial: SerpState = SAMPLE) {
     );
     const descriptionMax = thresholds.descMaxPixels;
     const descriptionMaxChars = thresholds.descMaxChars;
-    const descriptionStatus = useMemo(
-        () => classify(descriptionWidth, descriptionMax, thresholds.descWarningRatio),
-        [descriptionWidth, descriptionMax, thresholds.descWarningRatio],
-    );
+    const descriptionStatus = useMemo(() => {
+        if (state.description.length > 0 && state.description.length <= DESCRIPTION_MIN_CHARS) {
+            return 'short';
+        }
+        return classify(descriptionWidth, descriptionMax, thresholds.descWarningRatio);
+    }, [state.description.length, descriptionWidth, descriptionMax, thresholds.descWarningRatio]);
     const splitAtMax = useMemo(
         () =>
             splitDescriptionOverflow(
