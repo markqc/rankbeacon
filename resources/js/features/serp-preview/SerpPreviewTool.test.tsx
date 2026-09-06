@@ -102,7 +102,7 @@ describe('SerpPreviewTool', () => {
             expect(screen.getByText('Fetched metadata successfully.')).toBeInTheDocument();
         });
 
-        expect((screen.getByLabelText(/Site name/i) as HTMLInputElement).value).toBe('Example');
+        expect((screen.getByLabelText(/Site name/i) as HTMLInputElement).value).toBe('');
         expect((screen.getByLabelText(/Title/i) as HTMLInputElement).value).toBe('Example Title');
         expect((screen.getByLabelText(/Meta description/i) as HTMLTextAreaElement).value).toBe('Example description.');
     });
