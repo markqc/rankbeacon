@@ -1,14 +1,11 @@
 export type Device = 'desktop' | 'mobile';
 
-export type FaviconKey = 'globe' | 'search' | 'zap' | 'target';
-
 export interface SerpState {
     url: string;
     siteName: string;
     title: string;
     description: string;
     breadcrumb: string;
-    favicon: FaviconKey;
     faviconUrl: string | null;
     device: Device;
 }

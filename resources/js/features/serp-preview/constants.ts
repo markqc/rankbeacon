@@ -1,5 +1,4 @@
-import { Globe, Search, Target, Zap } from 'lucide-react';
-import type { Device, FaviconKey, SerpState } from './types';
+import type { Device, SerpState } from './types';
 
 export const SERP_FONTS = {
     title: '20px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
@@ -55,14 +54,6 @@ export const SAMPLE: SerpState = {
     title: 'SERP Preview — RankBeacon',
     description: 'Preview your page title and description before searchers see them in Google results.',
     breadcrumb: 'tools/serp-preview',
-    favicon: 'globe',
     faviconUrl: null,
     device: 'desktop',
 };
-
-export const FAVICON_OPTIONS = [
-    { value: 'globe' as FaviconKey, label: 'Globe', Icon: Globe },
-    { value: 'search' as FaviconKey, label: 'Search', Icon: Search },
-    { value: 'zap' as FaviconKey, label: 'Zap', Icon: Zap },
-    { value: 'target' as FaviconKey, label: 'Target', Icon: Target },
-] as const;
