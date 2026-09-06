@@ -300,11 +300,14 @@ export default function SerpPreviewTool() {
                 <div className="space-y-3">
                     <Alert variant={statusTone(titleStatus)}>
                         {titleStatus === 'safe' && 'The title can be read everywhere, nice job!'}
+                        {titleStatus === 'short' && 'The title can be read everywhere, but it is probably too short.'}
                         {titleStatus === 'warning' && 'The title might be truncated in some search results.'}
                         {titleStatus === 'truncated' && 'The title is too long and will likely be truncated.'}
                     </Alert>
                     <Alert variant={statusTone(descriptionStatus)}>
                         {descriptionStatus === 'safe' && 'The meta description can be read everywhere, nice job!'}
+                        {descriptionStatus === 'short' &&
+                            'The meta description can be read everywhere, but it is probably too short.'}
                         {descriptionStatus === 'warning' && 'The meta description might be cut off.'}
                         {descriptionStatus === 'truncated' &&
                             'The meta description is probably too long. Make it shorter.'}
