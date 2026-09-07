@@ -54,7 +54,7 @@ describe('SerpPreviewTool', () => {
         expect(screen.getByLabelText(/Site name/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/Title/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/Meta description/i)).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: 'Reset to sample' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Reset' })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Fetch Page' })).toBeInTheDocument();
     });
 
@@ -72,7 +72,7 @@ describe('SerpPreviewTool', () => {
         const titleInput = screen.getByLabelText(/Title/i) as HTMLInputElement;
 
         fireEvent.change(titleInput, { target: { value: 'Changed title' } });
-        fireEvent.click(screen.getByRole('button', { name: 'Reset to sample' }));
+        fireEvent.click(screen.getByRole('button', { name: 'Reset' }));
 
         expect(titleInput.value).toBe('SERP Preview — RankBeacon');
     });
