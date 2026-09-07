@@ -7,6 +7,7 @@ import FormField from '../../../components/FormField';
 import TextInput from '../../../components/TextInput';
 import Lighthouse from '../../../components/icons/Lighthouse';
 import { useFavicon } from '../../../hooks/useFavicon';
+import { useScrollReveal } from '../../../hooks/useScrollReveal';
 import { authenticateWithPasskey, isWebAuthnSupported } from '../../../features/passkeys';
 import type { PageProps } from '../../../types';
 
@@ -22,6 +23,7 @@ export default function Login() {
     const [passkeyBusy, setPasskeyBusy] = useState(false);
     const [passkeyError, setPasskeyError] = useState<string | null>(null);
     const webauthnAvailable = isWebAuthnSupported();
+    useScrollReveal();
 
     function submit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -100,7 +102,7 @@ export default function Login() {
 
                 <div className="flex flex-1 items-center justify-center p-6 lg:p-12">
                     <div className="w-full max-w-sm">
-                        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+                        <div data-reveal="true" className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
                             <h2 className="text-xl font-semibold text-navy-950">Sign in</h2>
                             <p className="mt-1 text-sm text-slate-500">Enter your email and password to continue.</p>
 
