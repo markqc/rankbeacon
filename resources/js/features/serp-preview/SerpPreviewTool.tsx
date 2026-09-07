@@ -101,6 +101,7 @@ export default function SerpPreviewTool() {
     } = useSerpPreview();
 
     const [fetchStatus, setFetchStatus] = useState<FetchStatus>({ type: 'idle' });
+    const [urlError, setUrlError] = useState<string | null>(null);
     const [faviconImageError, setFaviconImageError] = useState(false);
     const abortRef = useRef<AbortController | null>(null);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -119,6 +120,11 @@ export default function SerpPreviewTool() {
     }, [state.faviconUrl]);
 
     const previewMaxWidth = 'max-w-[600px]';
+    const allFieldsBlank =
+        state.siteName.trim() === '' &&
+        state.title.trim() === '' &&
+        state.description.trim() === '' &&
+        state.url.trim() === '';
 
     const validateUrl = (url: string): string | null => {
         const trimmed = url.trim();
@@ -194,7 +200,8 @@ export default function SerpPreviewTool() {
         const error = validateUrl(url);
 
         if (error) {
-            setFetchStatus({ type: 'error', message: error });
+            setUrlError(error);
+            setFetchStatus({ type: 'idle' });
             return;
         }
 
@@ -258,13 +265,17 @@ export default function SerpPreviewTool() {
                     />
                 </FormField>
 
-                <FormField label="Load from URL" htmlFor="serp-url" required>
+                <FormField label="Load from URL" htmlFor="serp-url" required error={urlError ?? undefined}>
                     <div className="space-y-2">
                         <TextInput
                             id="serp-url"
                             value={state.url}
-                            onChange={(e) => setField('url', e.target.value)}
+                            onChange={(e) => {
+                                setField('url', e.target.value);
+                                setUrlError(null);
+                            }}
                             placeholder="https://..."
+                            error={urlError !== null}
                         />
                         <div className="flex flex-wrap items-center gap-2">
                             <Button
@@ -292,23 +303,29 @@ export default function SerpPreviewTool() {
                     alertVariant() !== 'warning' && <Alert variant={alertVariant()}>{fetchStatus.message}</Alert>}
             </section>
 
+            {!allFieldsBlank && (
             <section aria-label="SERP preview" className="space-y-4">
                 <h2 className="font-semibold text-slate-900">Result:</h2>
                 <div className="space-y-3">
-                    <Alert variant={statusTone(titleStatus)}>
-                        {titleStatus === 'safe' && 'The title can be read everywhere, nice job!'}
-                        {titleStatus === 'short' && 'The title can be read everywhere, but it is probably too short.'}
-                        {titleStatus === 'warning' && 'The title might be truncated in some search results.'}
-                        {titleStatus === 'truncated' && 'The title is too long and will likely be truncated.'}
-                    </Alert>
-                    <Alert variant={statusTone(descriptionStatus)}>
-                        {descriptionStatus === 'safe' && 'The meta description can be read everywhere, nice job!'}
-                        {descriptionStatus === 'short' &&
-                            'The meta description can be read everywhere, but it is probably too short.'}
-                        {descriptionStatus === 'warning' && 'The meta description might be cut off.'}
-                        {descriptionStatus === 'truncated' &&
-                            'The meta description is probably too long. Make it shorter.'}
-                    </Alert>
+                    {state.title.length > 0 && (
+                        <Alert variant={statusTone(titleStatus)}>
+                            {titleStatus === 'safe' && 'The title can be read everywhere, nice job!'}
+                            {titleStatus === 'short' &&
+                                'The title can be read everywhere, but it is probably too short.'}
+                            {titleStatus === 'warning' && 'The title might be truncated in some search results.'}
+                            {titleStatus === 'truncated' && 'The title is too long and will likely be truncated.'}
+                        </Alert>
+                    )}
+                    {state.description.length > 0 && (
+                        <Alert variant={statusTone(descriptionStatus)}>
+                            {descriptionStatus === 'safe' && 'The meta description can be read everywhere, nice job!'}
+                            {descriptionStatus === 'short' &&
+                                'The meta description can be read everywhere, but it is probably too short.'}
+                            {descriptionStatus === 'warning' && 'The meta description might be cut off.'}
+                            {descriptionStatus === 'truncated' &&
+                                'The meta description is probably too long. Make it shorter.'}
+                        </Alert>
+                    )}
                 </div>
 
                 <Card className={`${previewMaxWidth} w-full`}>
@@ -376,6 +393,7 @@ export default function SerpPreviewTool() {
                     device width and is not a guarantee.
                 </p>
             </section>
+            )}
         </div>
     );
 }
