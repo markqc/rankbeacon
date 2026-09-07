@@ -61,6 +61,21 @@ class RequestMetadataParser
         return hash('sha256', session()->getId().'|'.config('app.key'));
     }
 
+    public function country(Request $request): ?string
+    {
+        $headers = ['CF-IPCountry', 'Cloudflare-IP-Country', 'X-Country-Code'];
+
+        foreach ($headers as $header) {
+            $value = $request->header($header);
+
+            if ($value !== null && $value !== '') {
+                return strtoupper($value);
+            }
+        }
+
+        return null;
+    }
+
     private function isExcludedPath(Request $request): bool
     {
         $raw = (string) $request->input('path', '');

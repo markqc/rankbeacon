@@ -74,7 +74,7 @@ export default function Dashboard() {
                     </div>
                 </Card>
 
-                <div className="grid gap-6 lg:grid-cols-2">
+                <div className="grid gap-6 lg:grid-cols-3">
                     <Card>
                         <h2 className="mb-4 text-lg font-semibold text-navy-950">Device breakdown</h2>
                         <div className="h-72 w-full">
@@ -86,7 +86,7 @@ export default function Dashboard() {
                                         nameKey="device"
                                         cx="50%"
                                         cy="50%"
-                                        outerRadius={90}
+                                        outerRadius={70}
                                         label
                                     >
                                         {stats.devices.map((entry, index) => (
@@ -116,6 +116,27 @@ export default function Dashboard() {
                                     />
                                     <Tooltip contentStyle={{ borderRadius: '0.5rem', borderColor: '#E2E8F0' }} />
                                     <Bar dataKey="views" fill="#2563EB" radius={[0, 4, 4, 0]} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </Card>
+
+                    <Card>
+                        <h2 className="mb-4 text-lg font-semibold text-navy-950">Top countries</h2>
+                        <div className="h-72 w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={stats.topCountries} layout="vertical" margin={{ left: 20 }}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                                    <XAxis type="number" hide />
+                                    <YAxis
+                                        dataKey="country"
+                                        type="category"
+                                        width={40}
+                                        tick={{ fontSize: 12 }}
+                                        interval={0}
+                                    />
+                                    <Tooltip contentStyle={{ borderRadius: '0.5rem', borderColor: '#E2E8F0' }} />
+                                    <Bar dataKey="views" fill="#0EA5A8" radius={[0, 4, 4, 0]} />
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
@@ -181,6 +202,7 @@ export default function Dashboard() {
                                     <thead className="bg-slate-50 text-slate-700">
                                         <tr>
                                             <th className="px-4 py-3 font-semibold">URL</th>
+                                            <th className="px-4 py-3 font-semibold">Country</th>
                                             <th className="px-4 py-3 font-semibold">Fetched at</th>
                                         </tr>
                                     </thead>
@@ -194,13 +216,16 @@ export default function Dashboard() {
                                                     {serpFetch.url}
                                                 </td>
                                                 <td className="whitespace-nowrap px-4 py-3 text-slate-600">
+                                                    {serpFetch.country ?? 'Unknown'}
+                                                </td>
+                                                <td className="whitespace-nowrap px-4 py-3 text-slate-600">
                                                     {formatDateTime(serpFetch.created_at)}
                                                 </td>
                                             </tr>
                                         ))}
                                         {recentSerpFetches.data.length === 0 && (
                                             <tr>
-                                                <td colSpan={2} className="px-4 py-8 text-center text-slate-500">
+                                                <td colSpan={3} className="px-4 py-8 text-center text-slate-500">
                                                     No SERP fetches in the last 30 days.
                                                 </td>
                                             </tr>
