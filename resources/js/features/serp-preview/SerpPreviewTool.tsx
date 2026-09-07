@@ -275,6 +275,9 @@ export default function SerpPreviewTool() {
                             >
                                 {fetchStatus.type === 'loading' ? 'Fetching…' : 'Fetch Page'}
                             </Button>
+                            <Button type="button" variant="outline" onClick={handleReset}>
+                                Reset
+                            </Button>
                             <p className="text-xs text-slate-500">
                                 Only public http or https URLs are supported. The URL is validated and resolved safely
                                 on the server.
@@ -290,12 +293,6 @@ export default function SerpPreviewTool() {
             </section>
 
             <section aria-label="SERP preview" className="space-y-4">
-                <div className="flex flex-wrap gap-4">
-                    <Button type="button" variant="outline" onClick={handleReset}>
-                        Reset to sample
-                    </Button>
-                </div>
-
                 <h2 className="font-semibold text-slate-900">Result:</h2>
                 <div className="space-y-3">
                     <Alert variant={statusTone(titleStatus)}>
