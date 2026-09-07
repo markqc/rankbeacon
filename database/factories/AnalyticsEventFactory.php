@@ -28,12 +28,15 @@ class AnalyticsEventFactory extends Factory
         ];
     }
 
-    public function toolEvent(string $tool, string $action = 'fetch'): static
+    public function toolEvent(string $tool, string $action = 'fetch', ?string $url = null): static
     {
         return $this->state(fn (array $attributes) => [
             'event_type' => 'tool_event',
             'tool_name' => $tool,
-            'metadata' => ['action' => $action],
+            'metadata' => [
+                'action' => $action,
+                'url' => $url ?? fake()->url(),
+            ],
         ]);
     }
 }

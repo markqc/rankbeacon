@@ -214,6 +214,64 @@ class AnalyticsTest extends TestCase
         );
     }
 
+    public function test_dashboard_includes_paginated_recent_serp_fetches(): void
+    {
+        $user = User::factory()->superAdmin()->create();
+        $session = AnalyticsSession::factory()->create();
+
+        AnalyticsEvent::factory()->count(12)->toolEvent('serp-preview')->state([
+            'analytics_session_id' => $session->id,
+            'created_at' => now(),
+            'metadata' => fn () => ['action' => 'fetch', 'url' => fake()->unique()->url()],
+        ])->create();
+
+        $response = $this->actingAs($user)->get('/admin/dashboard?page=2');
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('Admin/Dashboard')
+            ->has('recentSerpFetches.data', 2)
+            ->where('recentSerpFetches.meta.current_page', 2)
+            ->where('recentSerpFetches.meta.last_page', 2)
+            ->where('recentSerpFetches.meta.per_page', 10)
+            ->where('recentSerpFetches.meta.total', 12)
+        );
+    }
+
+    public function test_dashboard_serp_fetch_list_filters_by_url_and_date_range(): void
+    {
+        $user = User::factory()->superAdmin()->create();
+        $session = AnalyticsSession::factory()->create();
+
+        AnalyticsEvent::factory()->toolEvent('serp-preview')->state([
+            'analytics_session_id' => $session->id,
+            'created_at' => now(),
+            'metadata' => ['action' => 'fetch'],
+        ])->create();
+
+        AnalyticsEvent::factory()->toolEvent('serp-preview')->state([
+            'analytics_session_id' => $session->id,
+            'created_at' => now()->subDays(31),
+            'metadata' => ['action' => 'fetch', 'url' => 'https://old.example.com/'],
+        ])->create();
+
+        AnalyticsEvent::factory()->toolEvent('serp-preview')->state([
+            'analytics_session_id' => $session->id,
+            'created_at' => now(),
+            'metadata' => ['action' => 'fetch', 'url' => 'https://recent.example.com/'],
+        ])->create();
+
+        $response = $this->actingAs($user)->get('/admin/dashboard');
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('Admin/Dashboard')
+            ->has('recentSerpFetches.data', 1)
+            ->where('recentSerpFetches.data.0.url', 'https://recent.example.com/')
+            ->where('recentSerpFetches.meta.total', 1)
+        );
+    }
+
     public function test_prune_command_removes_old_analytics_data(): void
     {
         $oldSession = AnalyticsSession::factory()->create([
