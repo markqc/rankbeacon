@@ -15,6 +15,7 @@ import {
     YAxis,
 } from 'recharts';
 import Card from '../../components/Card';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 import AdminLayout from '../../layouts/AdminLayout';
 import type { ActivityLog, DashboardStats, PageProps, PaginatedData, SerpFetch } from '../../types';
 
@@ -33,17 +34,18 @@ interface DashboardPageProps extends PageProps {
 
 export default function Dashboard() {
     const { stats, recentActivity, recentSerpFetches } = usePage<DashboardPageProps>().props;
+    useScrollReveal();
 
     return (
         <AdminLayout title="Dashboard">
             <div className="space-y-6">
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div data-reveal-stagger="true" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <SummaryCard title="Page views" value={stats.summary.page_views} />
                     <SummaryCard title="Unique sessions" value={stats.summary.unique_sessions} />
                     <SummaryCard title="SERP fetches" value={stats.summary.serp_fetches} />
                 </div>
 
-                <Card>
+                <Card data-reveal="true">
                     <h2 className="mb-4 text-lg font-semibold text-navy-950">Visits over the last 30 days</h2>
                     <div className="h-72 w-full">
                         <ResponsiveContainer width="100%" height="100%">
@@ -74,7 +76,7 @@ export default function Dashboard() {
                     </div>
                 </Card>
 
-                <div className="grid gap-6 lg:grid-cols-3">
+                <div data-reveal-stagger="true" className="grid gap-6 lg:grid-cols-3">
                     <Card>
                         <h2 className="mb-4 text-lg font-semibold text-navy-950">Device breakdown</h2>
                         <div className="h-72 w-full">
@@ -143,7 +145,7 @@ export default function Dashboard() {
                     </Card>
                 </div>
 
-                <div className="grid gap-6 lg:grid-cols-3">
+                <div data-reveal-stagger="true" className="grid gap-6 lg:grid-cols-3">
                     <Card className="lg:col-span-1">
                         <h2 className="mb-4 text-lg font-semibold text-navy-950">Recent activity</h2>
                         {recentActivity.length === 0 ? (
