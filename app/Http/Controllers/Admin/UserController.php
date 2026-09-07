@@ -155,6 +155,10 @@ class UserController extends Controller
     {
         $this->authorize('delete', $user);
 
+        if ($user->id === 1) {
+            return back()->with('error', 'The primary administrator account cannot be deleted.');
+        }
+
         if ($user->id === auth()->id()) {
             return back()->with('error', 'You cannot delete your own account.');
         }

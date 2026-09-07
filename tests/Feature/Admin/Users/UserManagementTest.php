@@ -223,6 +223,18 @@ class UserManagementTest extends TestCase
         ]);
     }
 
+    public function test_cannot_delete_user_with_id_one(): void
+    {
+        $protectedUser = User::factory()->create();
+        $admin = User::factory()->superAdmin()->create();
+
+        $response = $this->actingAs($admin)->delete("/admin/users/{$protectedUser->id}");
+
+        $response->assertRedirect();
+        $response->assertSessionHas('error');
+        $this->assertNull($protectedUser->fresh()->deleted_at);
+    }
+
     public function test_cannot_delete_own_account(): void
     {
         $admin = User::factory()->superAdmin()->create();
