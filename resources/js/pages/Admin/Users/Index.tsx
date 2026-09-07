@@ -15,7 +15,8 @@ interface UsersPageProps extends PageProps {
 }
 
 export default function Index() {
-    const { users } = usePage<UsersPageProps>().props;
+    const { users, auth } = usePage<UsersPageProps>().props;
+    const currentUserId = auth.user?.id;
     const { data, setData, get } = useForm({ search: '', status: '' });
 
     function submit(e: FormEvent) {
@@ -140,6 +141,20 @@ export default function Index() {
                                                 >
                                                     Edit
                                                 </LinkButton>
+                                                {currentUserId && user.id !== 1 && user.id !== currentUserId && (
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => {
+                                                            if (confirm(`Are you sure you want to delete ${user.name}?`)) {
+                                                                router.delete(`/admin/users/${user.id}`);
+                                                            }
+                                                        }}
+                                                    >
+                                                        Delete
+                                                    </Button>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>
