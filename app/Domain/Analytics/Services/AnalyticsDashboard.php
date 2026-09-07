@@ -19,9 +19,16 @@ class AnalyticsDashboard
      */
     public function stats(): array
     {
-        $start = now()->subDays(29)->startOfDay();
-        $end = now()->endOfDay();
+        return $this->rangeStats(now()->subDays(29)->startOfDay(), now()->endOfDay());
+    }
 
+    /**
+     * Build statistics for an arbitrary date range.
+     *
+     * @return array<string, mixed>
+     */
+    public function rangeStats(Carbon $start, Carbon $end): array
+    {
         return [
             'summary' => $this->summary($start, $end),
             'visits' => $this->visitsOverTime($start, $end),
@@ -140,10 +147,10 @@ class AnalyticsDashboard
     /**
      * @return LengthAwarePaginator<int, array{url: string, country: string|null, created_at: string|null}>
      */
-    public function recentSerpFetches(int $page = 1, int $perPage = 10): LengthAwarePaginator
+    public function recentSerpFetches(int $page = 1, int $perPage = 10, ?Carbon $start = null, ?Carbon $end = null): LengthAwarePaginator
     {
-        $start = now()->subDays(29)->startOfDay();
-        $end = now()->endOfDay();
+        $start ??= now()->subDays(29)->startOfDay();
+        $end ??= now()->endOfDay();
 
         return AnalyticsEvent::where('event_type', 'tool_event')
             ->where('tool_name', 'serp-preview')
