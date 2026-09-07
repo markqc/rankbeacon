@@ -1,4 +1,4 @@
-import { usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import {
     Area,
     AreaChart,
@@ -16,7 +16,7 @@ import {
 } from 'recharts';
 import Card from '../../components/Card';
 import AdminLayout from '../../layouts/AdminLayout';
-import type { ActivityLog, DashboardStats, PageProps } from '../../types';
+import type { ActivityLog, DashboardStats, PageProps, PaginatedData, SerpFetch } from '../../types';
 
 const COLORS = ['#0EA5A8', '#2563EB', '#64748B', '#F59E0B', '#EF4444', '#8B5CF6'];
 
@@ -28,10 +28,11 @@ function formatDate(value: string) {
 interface DashboardPageProps extends PageProps {
     stats: DashboardStats;
     recentActivity: ActivityLog[];
+    recentSerpFetches: PaginatedData<SerpFetch>;
 }
 
 export default function Dashboard() {
-    const { stats, recentActivity } = usePage<DashboardPageProps>().props;
+    const { stats, recentActivity, recentSerpFetches } = usePage<DashboardPageProps>().props;
 
     return (
         <AdminLayout title="Dashboard">
@@ -172,10 +173,97 @@ export default function Dashboard() {
                                 </AreaChart>
                             </ResponsiveContainer>
                         </div>
+
+                        <div className="mt-6">
+                            <h3 className="mb-3 text-sm font-semibold text-navy-950">Recent SERP fetches</h3>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-sm">
+                                    <thead className="bg-slate-50 text-slate-700">
+                                        <tr>
+                                            <th className="px-4 py-3 font-semibold">URL</th>
+                                            <th className="px-4 py-3 font-semibold">Fetched at</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100">
+                                        {recentSerpFetches.data.map((serpFetch, index) => (
+                                            <tr key={`${serpFetch.url}-${index}`} className="hover:bg-slate-50">
+                                                <td
+                                                    className="max-w-xs truncate px-4 py-3 text-slate-900"
+                                                    title={serpFetch.url}
+                                                >
+                                                    {serpFetch.url}
+                                                </td>
+                                                <td className="whitespace-nowrap px-4 py-3 text-slate-600">
+                                                    {formatDateTime(serpFetch.created_at)}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        {recentSerpFetches.data.length === 0 && (
+                                            <tr>
+                                                <td colSpan={2} className="px-4 py-8 text-center text-slate-500">
+                                                    No SERP fetches in the last 30 days.
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {recentSerpFetches.meta.last_page > 1 && <Pagination meta={recentSerpFetches.meta} />}
+                        </div>
                     </Card>
                 </div>
             </div>
         </AdminLayout>
+    );
+}
+
+function formatDateTime(value: string | null): string {
+    if (!value) {
+        return '-';
+    }
+
+    return new Date(value).toLocaleString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+}
+
+function Pagination({ meta }: { meta: PaginatedData<SerpFetch>['meta'] }) {
+    return (
+        <nav aria-label="SERP fetch pagination" className="mt-4 flex flex-wrap items-center justify-between gap-4">
+            <p className="text-sm text-slate-600">
+                Showing {meta.from} to {meta.to} of {meta.total} results
+            </p>
+            <div className="flex gap-2">
+                {meta.links
+                    .filter((link) => !isNaN(Number(link.label)))
+                    .map((link) => (
+                        <button
+                            key={link.label}
+                            type="button"
+                            disabled={link.url === null}
+                            onClick={() =>
+                                router.get(
+                                    meta.path,
+                                    { page: Number(link.label) },
+                                    { preserveState: true, preserveScroll: true },
+                                )
+                            }
+                            className={`rounded-md px-3 py-1.5 text-sm font-medium ${
+                                link.active
+                                    ? 'bg-blue-600 text-white'
+                                    : 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-50'
+                            }`}
+                            aria-label={`Page ${link.label}`}
+                            aria-current={link.active ? 'page' : undefined}
+                        >
+                            {link.label}
+                        </button>
+                    ))}
+            </div>
+        </nav>
     );
 }
 

@@ -36,6 +36,11 @@ export interface ActivityLog {
     created_at: string | null;
 }
 
+export interface SerpFetch {
+    url: string;
+    created_at: string;
+}
+
 export interface PaginatedData<T> {
     data: T[];
     links: {
@@ -62,6 +67,11 @@ export interface SiteSettings {
     social: Record<string, string | null>;
     mail: Record<string, string | number | null>;
     analytics: Record<string, string | null>;
+}
+
+export interface SerpFetch {
+    url: string;
+    created_at: string;
 }
 
 export interface DashboardStats {

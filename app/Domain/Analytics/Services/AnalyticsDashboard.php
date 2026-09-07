@@ -5,6 +5,7 @@ namespace App\Domain\Analytics\Services;
 use App\Models\AnalyticsDailyStat;
 use App\Models\AnalyticsEvent;
 use App\Models\AnalyticsSession;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -114,6 +115,27 @@ class AnalyticsDashboard
                 'fetches' => (int) ($rows[$date] ?? 0),
             ];
         });
+    }
+
+    /**
+     * @return LengthAwarePaginator<int, array{url: string, created_at: string|null}>
+     */
+    public function recentSerpFetches(int $page = 1, int $perPage = 10): LengthAwarePaginator
+    {
+        $start = now()->subDays(29)->startOfDay();
+        $end = now()->endOfDay();
+
+        return AnalyticsEvent::where('event_type', 'tool_event')
+            ->where('tool_name', 'serp-preview')
+            ->whereNotNull('metadata->url')
+            ->whereBetween('created_at', [$start, $end])
+            ->latest()
+            ->paginate($perPage, ['id', 'metadata', 'created_at'], 'page', $page)
+            ->through(fn (AnalyticsEvent $event) => [
+                'url' => $event->metadata['url'] ?? null,
+                'created_at' => $event->created_at?->toDateTimeString(),
+            ])
+            ->withQueryString();
     }
 
     /**
