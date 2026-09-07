@@ -1,0 +1,1 @@
+import{t as e}from"./app-BY5E9B0b.js";var t=e();function n({children:e,className:n=``,...r}){return(0,t.jsx)(`div`,{className:`rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md ${n}`,...r,children:e})}export{n as t};

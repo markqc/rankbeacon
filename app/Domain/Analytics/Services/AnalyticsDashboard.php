@@ -26,6 +26,7 @@ class AnalyticsDashboard
             'summary' => $this->summary($start, $end),
             'visits' => $this->visitsOverTime($start, $end),
             'devices' => $this->deviceBreakdown($start, $end),
+            'topCountries' => $this->topCountries($start, $end),
             'topPages' => $this->topPages($start, $end),
             'serpFetches' => $this->serpFetchesOverTime($start, $end),
         ];
@@ -100,6 +101,25 @@ class AnalyticsDashboard
     }
 
     /**
+     * @return Collection<int, array{country: string, views: int}>
+     */
+    private function topCountries(Carbon $start, Carbon $end): Collection
+    {
+        return AnalyticsEvent::select('metadata->country as country', DB::raw('count(*) as views'))
+            ->where('event_type', 'page_view')
+            ->whereBetween('created_at', [$start, $end])
+            ->whereNotNull('metadata->country')
+            ->groupBy('metadata->country')
+            ->orderByDesc('views')
+            ->limit(10)
+            ->get()
+            ->map(fn ($row) => [
+                'country' => $row->country ?? 'Unknown',
+                'views' => (int) $row->views,
+            ]);
+    }
+
+    /**
      * @return Collection<int, array{date: string, fetches: int}>
      */
     private function serpFetchesOverTime(Carbon $start, Carbon $end): Collection
@@ -118,7 +138,7 @@ class AnalyticsDashboard
     }
 
     /**
-     * @return LengthAwarePaginator<int, array{url: string, created_at: string|null}>
+     * @return LengthAwarePaginator<int, array{url: string, country: string|null, created_at: string|null}>
      */
     public function recentSerpFetches(int $page = 1, int $perPage = 10): LengthAwarePaginator
     {
@@ -133,6 +153,7 @@ class AnalyticsDashboard
             ->paginate($perPage, ['id', 'metadata', 'created_at'], 'page', $page)
             ->through(fn (AnalyticsEvent $event) => [
                 'url' => $event->metadata['url'] ?? null,
+                'country' => $event->metadata['country'] ?? null,
                 'created_at' => $event->created_at?->toDateTimeString(),
             ])
             ->withQueryString();

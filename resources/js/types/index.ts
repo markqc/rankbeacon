@@ -38,6 +38,7 @@ export interface ActivityLog {
 
 export interface SerpFetch {
     url: string;
+    country: string | null;
     created_at: string;
 }
 
@@ -69,11 +70,6 @@ export interface SiteSettings {
     analytics: Record<string, string | null>;
 }
 
-export interface SerpFetch {
-    url: string;
-    created_at: string;
-}
-
 export interface DashboardStats {
     summary: {
         page_views: number;
@@ -82,6 +78,7 @@ export interface DashboardStats {
     };
     visits: { date: string; views: number }[];
     devices: { device: string; sessions: number }[];
+    topCountries: { country: string; views: number }[];
     topPages: { path: string; views: number }[];
     serpFetches: { date: string; fetches: number }[];
 }

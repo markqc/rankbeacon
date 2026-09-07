@@ -23,7 +23,7 @@ class AnalyticsEventFactory extends Factory
             'event_type' => $this->faker->randomElement(['page_view', 'tool_event']),
             'page_path' => $this->faker->randomElement(['/', '/tools', '/tools/serp-preview', '/guides']),
             'tool_name' => null,
-            'metadata' => null,
+            'metadata' => ['country' => $this->faker->countryCode()],
             'created_at' => $this->faker->dateTimeBetween('-30 days'),
         ];
     }
@@ -36,6 +36,7 @@ class AnalyticsEventFactory extends Factory
             'metadata' => [
                 'action' => $action,
                 'url' => $url ?? fake()->url(),
+                'country' => $this->faker->countryCode(),
             ],
         ]);
     }

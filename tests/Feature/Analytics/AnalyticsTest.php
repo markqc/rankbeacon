@@ -158,6 +158,47 @@ class AnalyticsTest extends TestCase
         ]);
     }
 
+    public function test_page_view_records_country_from_cloudflare_header(): void
+    {
+        $this->withSession(['_token' => $this->token])
+            ->withHeaders([
+                'X-CSRF-TOKEN' => $this->token,
+                'User-Agent' => 'Mozilla/5.0 (compatible; Test/1.0)',
+                'CF-IPCountry' => 'US',
+            ])
+            ->postJson('/api/analytics/event', [
+                'event_type' => 'page_view',
+                'path' => '/',
+            ])
+            ->assertCreated();
+
+        $event = AnalyticsEvent::first();
+
+        $this->assertSame('US', $event->metadata['country']);
+    }
+
+    public function test_tool_event_records_country_from_cloudflare_header(): void
+    {
+        $tracker = app(AnalyticsTracker::class);
+        $request = Request::create(
+            'https://rankbeacon.local.system/tools/serp-preview',
+            'POST',
+            ['path' => '/tools/serp-preview'],
+            [],
+            [],
+            [
+                'HTTP_USER_AGENT' => 'Mozilla/5.0 (compatible; Test/1.0)',
+                'HTTP_CF_IPCOUNTRY' => 'CA',
+            ],
+            null,
+        );
+
+        $event = $tracker->trackToolEvent($request, 'serp-preview', 'fetch', ['url' => 'https://example.com/']);
+
+        $this->assertNotNull($event);
+        $this->assertSame('CA', $event->metadata['country']);
+    }
+
     public function test_dashboard_returns_aggregated_stats(): void
     {
         $user = User::factory()->superAdmin()->create();
@@ -211,6 +252,38 @@ class AnalyticsTest extends TestCase
             ->where('stats.summary.page_views', 500)
             ->where('stats.summary.serp_fetches', 25)
             ->where('stats.topPages.0.views', 500)
+        );
+    }
+
+    public function test_dashboard_includes_top_countries(): void
+    {
+        $user = User::factory()->superAdmin()->create();
+        $session = AnalyticsSession::factory()->create();
+
+        AnalyticsEvent::factory()->count(5)->state([
+            'analytics_session_id' => $session->id,
+            'event_type' => 'page_view',
+            'created_at' => now(),
+            'metadata' => ['country' => 'US'],
+        ])->create();
+
+        AnalyticsEvent::factory()->count(2)->state([
+            'analytics_session_id' => $session->id,
+            'event_type' => 'page_view',
+            'created_at' => now(),
+            'metadata' => ['country' => 'CA'],
+        ])->create();
+
+        $response = $this->actingAs($user)->get('/admin/dashboard');
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('Admin/Dashboard')
+            ->has('stats.topCountries', 2)
+            ->where('stats.topCountries.0.country', 'US')
+            ->where('stats.topCountries.0.views', 5)
+            ->where('stats.topCountries.1.country', 'CA')
+            ->where('stats.topCountries.1.views', 2)
         );
     }
 

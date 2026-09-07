@@ -25,7 +25,7 @@ class AnalyticsTracker
                 'analytics_session_id' => $session->id,
                 'event_type' => 'page_view',
                 'page_path' => $path,
-                'metadata' => $metadata,
+                'metadata' => array_merge($metadata ?? [], ['country' => $this->parser->country($request)]),
                 'created_at' => now(),
             ]);
 
@@ -49,7 +49,10 @@ class AnalyticsTracker
                 'event_type' => 'tool_event',
                 'page_path' => $request->input('path'),
                 'tool_name' => $tool,
-                'metadata' => array_merge($metadata ?? [], ['action' => $action]),
+                'metadata' => array_merge($metadata ?? [], [
+                    'action' => $action,
+                    'country' => $this->parser->country($request),
+                ]),
                 'created_at' => now(),
             ]);
 

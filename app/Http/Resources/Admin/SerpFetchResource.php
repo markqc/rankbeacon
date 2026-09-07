@@ -16,6 +16,7 @@ class SerpFetchResource extends JsonResource
     {
         return [
             'url' => $this->resource['url'],
+            'country' => $this->resource['country'],
             'created_at' => $this->resource['created_at'],
         ];
     }
