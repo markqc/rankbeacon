@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="google-site-verification" content="t9Y9vYV5W8qODDuR_zpKhidCpf0nYiWjbzCoM3i3z78">
     @php
         $faviconSetting = \App\Models\Setting::where('key', 'favicon_path')->first();
         $favicon = $faviconSetting?->value;

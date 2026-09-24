@@ -39,6 +39,20 @@ class SmokeTest extends TestCase
         $this->get('/')->assertStatus(200);
     }
 
+    public function test_public_pages_include_google_site_verification_meta_tag(): void
+    {
+        $verificationCode = 't9Y9vYV5W8qODDuR_zpKhidCpf0nYiWjbzCoM3i3z78';
+        $paths = ['/', '/tools', '/tools/serp-preview', '/guides', '/about', '/privacy', '/terms'];
+
+        foreach ($paths as $path) {
+            $response = $this->get($path);
+
+            $response->assertStatus(200);
+            $response->assertSee('name="google-site-verification"', false);
+            $response->assertSee("content=\"{$verificationCode}\"", false);
+        }
+    }
+
     public function test_tools_directory_renders(): void
     {
         $this->get('/tools')->assertStatus(200);
