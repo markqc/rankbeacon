@@ -92,7 +92,6 @@ export default function SerpPreviewTool() {
         titleTruncated,
         descriptionWidth,
         descriptionMax,
-        descriptionMaxChars,
         descriptionStatus,
         descriptionVisible,
         descriptionOverflow,
@@ -261,7 +260,6 @@ export default function SerpPreviewTool() {
                         width={descriptionWidth}
                         max={descriptionMax}
                         characters={state.description.length}
-                        maxChars={descriptionMaxChars}
                     />
                 </FormField>
 
