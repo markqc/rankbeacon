@@ -10,6 +10,12 @@ export const SERP_FONTS = {
 export const TITLE_MIN_CHARS = 9;
 export const DESCRIPTION_MIN_CHARS = 14;
 
+export const DESCRIPTION_FIT_THRESHOLDS = {
+    allPlatforms: 680,
+    googleDesktop: 920,
+    bingYahoo: 980,
+} as const;
+
 export const SERP_THRESHOLDS: Record<
     Device,
     {

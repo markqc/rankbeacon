@@ -77,6 +77,21 @@ describe('SerpPreviewTool', () => {
         expect(titleInput.value).toBe('SERP Preview — RankBeacon');
     });
 
+    it('updates the meta description fit feedback as the description changes and resets', () => {
+        render(<SerpPreviewTool />);
+        const descriptionInput = screen.getByLabelText(/Meta description/i);
+
+        fireEvent.change(descriptionInput, { target: { value: 'A'.repeat(200) } });
+
+        expect(
+            screen.getByText(/estimated to be truncated on Google desktop and mobile, Bing, and Yahoo/),
+        ).toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole('button', { name: 'Reset' }));
+
+        expect(screen.getByText('The meta description can be read everywhere, nice job!')).toBeInTheDocument();
+    });
+
     it('warns when a title is likely truncated', () => {
         render(<SerpPreviewTool />);
         const titleInput = screen.getByLabelText(/Title/i);

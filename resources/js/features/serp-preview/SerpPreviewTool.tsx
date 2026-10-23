@@ -93,6 +93,7 @@ export default function SerpPreviewTool() {
         descriptionWidth,
         descriptionMax,
         descriptionStatus,
+        descriptionFit,
         descriptionVisible,
         descriptionOverflow,
         descriptionHasMore,
@@ -302,95 +303,112 @@ export default function SerpPreviewTool() {
             </section>
 
             {!allFieldsBlank && (
-            <section aria-label="SERP preview" className="space-y-4">
-                <h2 className="font-semibold text-slate-900">Result:</h2>
-                <div className="space-y-3">
-                    {state.title.length > 0 && (
-                        <Alert variant={statusTone(titleStatus)}>
-                            {titleStatus === 'safe' && 'The title can be read everywhere, nice job!'}
-                            {titleStatus === 'short' &&
-                                'The title can be read everywhere, but it is probably too short.'}
-                            {titleStatus === 'warning' && 'The title might be truncated in some search results.'}
-                            {titleStatus === 'truncated' && 'The title is too long and will likely be truncated.'}
-                        </Alert>
-                    )}
-                    {state.description.length > 0 && (
-                        <Alert variant={statusTone(descriptionStatus)}>
-                            {descriptionStatus === 'safe' && 'The meta description can be read everywhere, nice job!'}
-                            {descriptionStatus === 'short' &&
-                                'The meta description can be read everywhere, but it is probably too short.'}
-                            {descriptionStatus === 'warning' && 'The meta description might be cut off.'}
-                            {descriptionStatus === 'truncated' &&
-                                'The meta description is probably too long. Make it shorter.'}
-                        </Alert>
-                    )}
-                </div>
-
-                <Card className={`${previewMaxWidth} w-full`}>
-                    <div className="space-y-1">
-                        <div className="flex min-w-0 gap-3">
-                            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-slate-100">
-                                {state.faviconUrl && !faviconImageError ? (
-                                    <img
-                                        src={state.faviconUrl}
-                                        alt=""
-                                        className="h-5 w-5 object-contain"
-                                        loading="lazy"
-                                        onError={() => setFaviconImageError(true)}
-                                    />
-                                ) : (
-                                    <Globe className="h-5 w-5 text-navy-950" aria-hidden="true" />
-                                )}
-                            </div>
-                            <div className="flex min-w-0 flex-1 flex-col">
-                                <div className="truncate text-[14px] text-slate-900" dir="auto">
-                                    {state.siteName || formattedUrl.domain}
-                                </div>
-                                <div className="flex min-w-0 items-center gap-1 text-[14px] text-green-700">
-                                    <span className="min-w-0 truncate" dir="auto">
-                                        {formattedUrl.displayUrl}
-                                    </span>
-                                    <MoreVertical className="h-3 w-3 flex-shrink-0 text-slate-500" aria-hidden="true" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <h3
-                            className="truncate text-[20px] font-medium leading-tight text-blue-700 hover:underline"
-                            style={{ maxWidth: thresholds.titleMaxWidth }}
-                            dir="auto"
-                            title={state.title}
-                        >
-                            {titleTruncated}
-                        </h3>
-
-                        <p
-                            className="text-[14px] leading-snug text-slate-700"
-                            style={{
-                                maxWidth: thresholds.descMaxWidth,
-                                overflowWrap: 'anywhere',
-                            }}
-                            dir="auto"
-                        >
-                            {descriptionVisible}
-                            {descriptionOverflow && (
-                                <>
-                                    {' '}
-                                    <span className="bg-yellow-200/60 text-slate-700">
-                                        {descriptionOverflow}
-                                        {descriptionHasMore && ' ...'}
-                                    </span>
-                                </>
-                            )}
-                        </p>
+                <section aria-label="SERP preview" className="space-y-4">
+                    <h2 className="font-semibold text-slate-900">Result:</h2>
+                    <div className="space-y-3">
+                        {state.title.length > 0 && (
+                            <Alert variant={statusTone(titleStatus)}>
+                                {titleStatus === 'safe' && 'The title can be read everywhere, nice job!'}
+                                {titleStatus === 'short' &&
+                                    'The title can be read everywhere, but it is probably too short.'}
+                                {titleStatus === 'warning' && 'The title might be truncated in some search results.'}
+                                {titleStatus === 'truncated' && 'The title is too long and will likely be truncated.'}
+                            </Alert>
+                        )}
+                        {state.description.length > 0 && (
+                            <Alert
+                                variant={
+                                    descriptionStatus === 'short' || descriptionFit !== 'allPlatforms'
+                                        ? 'warning'
+                                        : 'success'
+                                }
+                            >
+                                {descriptionStatus === 'short' &&
+                                    'The meta description can be read everywhere, but it is probably too short.'}
+                                {descriptionStatus !== 'short' &&
+                                    descriptionFit === 'allPlatforms' &&
+                                    'The meta description can be read everywhere, nice job!'}
+                                {descriptionStatus !== 'short' &&
+                                    descriptionFit === 'googleDesktop' &&
+                                    'The meta description is estimated to be fully shown on desktop on Google, Bing, and Yahoo.'}
+                                {descriptionStatus !== 'short' &&
+                                    descriptionFit === 'bingYahoo' &&
+                                    'The meta description is estimated to be fully shown on Bing and Yahoo.'}
+                                {descriptionStatus !== 'short' &&
+                                    descriptionFit === 'none' &&
+                                    'The meta description is estimated to be truncated on Google desktop and mobile, Bing, and Yahoo.'}
+                            </Alert>
+                        )}
                     </div>
-                </Card>
 
-                <p className="text-xs text-slate-500">
-                    Search engines may rewrite titles and snippets. This preview is an estimate based on the selected
-                    device width and is not a guarantee.
-                </p>
-            </section>
+                    <Card className={`${previewMaxWidth} w-full`}>
+                        <div className="space-y-1">
+                            <div className="flex min-w-0 gap-3">
+                                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-slate-100">
+                                    {state.faviconUrl && !faviconImageError ? (
+                                        <img
+                                            src={state.faviconUrl}
+                                            alt=""
+                                            className="h-5 w-5 object-contain"
+                                            loading="lazy"
+                                            onError={() => setFaviconImageError(true)}
+                                        />
+                                    ) : (
+                                        <Globe className="h-5 w-5 text-navy-950" aria-hidden="true" />
+                                    )}
+                                </div>
+                                <div className="flex min-w-0 flex-1 flex-col">
+                                    <div className="truncate text-[14px] text-slate-900" dir="auto">
+                                        {state.siteName || formattedUrl.domain}
+                                    </div>
+                                    <div className="flex min-w-0 items-center gap-1 text-[14px] text-green-700">
+                                        <span className="min-w-0 truncate" dir="auto">
+                                            {formattedUrl.displayUrl}
+                                        </span>
+                                        <MoreVertical
+                                            className="h-3 w-3 flex-shrink-0 text-slate-500"
+                                            aria-hidden="true"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h3
+                                className="truncate text-[20px] font-medium leading-tight text-blue-700 hover:underline"
+                                style={{ maxWidth: thresholds.titleMaxWidth }}
+                                dir="auto"
+                                title={state.title}
+                            >
+                                {titleTruncated}
+                            </h3>
+
+                            <p
+                                className="text-[14px] leading-snug text-slate-700"
+                                style={{
+                                    maxWidth: thresholds.descMaxWidth,
+                                    overflowWrap: 'anywhere',
+                                }}
+                                dir="auto"
+                            >
+                                {descriptionVisible}
+                                {descriptionOverflow && (
+                                    <>
+                                        {' '}
+                                        <span className="bg-yellow-200/60 text-slate-700">
+                                            {descriptionOverflow}
+                                            {descriptionHasMore && ' ...'}
+                                        </span>
+                                    </>
+                                )}
+                            </p>
+                        </div>
+                    </Card>
+
+                    <p className="text-xs text-slate-500">
+                        Search engines may rewrite titles and snippets. This preview is an estimate based on the
+                        selected device width and is not a guarantee.
+                    </p>
+                </section>
             )}
         </div>
     );
