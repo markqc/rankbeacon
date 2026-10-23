@@ -81,7 +81,7 @@ describe('SerpPreviewTool', () => {
         render(<SerpPreviewTool />);
         const descriptionInput = screen.getByLabelText(/Meta description/i);
 
-        fireEvent.change(descriptionInput, { target: { value: 'A'.repeat(200) } });
+        fireEvent.change(descriptionInput, { target: { value: 'あ'.repeat(80) } });
 
         expect(
             screen.getByText(/estimated to be truncated on Google desktop and mobile, Bing, and Yahoo/),
@@ -90,6 +90,28 @@ describe('SerpPreviewTool', () => {
         fireEvent.click(screen.getByRole('button', { name: 'Reset' }));
 
         expect(screen.getByText('The meta description can be read everywhere, nice job!')).toBeInTheDocument();
+    });
+
+    it('shows a danger message when the description reaches 145 characters', () => {
+        render(<SerpPreviewTool />);
+        const descriptionInput = screen.getByLabelText(/Meta description/i);
+
+        fireEvent.change(descriptionInput, { target: { value: 'A'.repeat(145) } });
+
+        expect(screen.getByText('The meta description is probably too long. Make it shorter.')).toBeInTheDocument();
+    });
+
+    it('shows the desktop-only warning when the description reaches 107 characters', () => {
+        render(<SerpPreviewTool />);
+        const descriptionInput = screen.getByLabelText(/Meta description/i);
+
+        fireEvent.change(descriptionInput, { target: { value: 'A'.repeat(107) } });
+
+        expect(
+            screen.getByText(
+                'The meta description is estimated to be fully shown on desktop on Google, Bing, and Yahoo.',
+            ),
+        ).toBeInTheDocument();
     });
 
     it('warns when a title is likely truncated', () => {

@@ -8,6 +8,7 @@ import TextInput from '../../components/TextInput';
 import Textarea from '../../components/Textarea';
 import { buildWarnings, fetchMetadata } from './api';
 import { statusTone } from './classification';
+import { DESCRIPTION_MAX_CHARS, DESCRIPTION_WARNING_CHARS } from './constants';
 
 import { useSerpPreview } from './useSerpPreview';
 import type { ApiResponse, FetchStatus } from './types';
@@ -125,6 +126,8 @@ export default function SerpPreviewTool() {
         state.title.trim() === '' &&
         state.description.trim() === '' &&
         state.url.trim() === '';
+    const descriptionTooLong = state.description.length >= DESCRIPTION_MAX_CHARS;
+    const descriptionDesktopOnly = !descriptionTooLong && state.description.length >= DESCRIPTION_WARNING_CHARS;
 
     const validateUrl = (url: string): string | null => {
         const trimmed = url.trim();
@@ -318,23 +321,37 @@ export default function SerpPreviewTool() {
                         {state.description.length > 0 && (
                             <Alert
                                 variant={
-                                    descriptionStatus === 'short' || descriptionFit !== 'allPlatforms'
-                                        ? 'warning'
-                                        : 'success'
+                                    descriptionTooLong
+                                        ? 'danger'
+                                        : descriptionStatus === 'short' ||
+                                            descriptionDesktopOnly ||
+                                            descriptionFit !== 'allPlatforms'
+                                          ? 'warning'
+                                          : 'success'
                                 }
                             >
                                 {descriptionStatus === 'short' &&
                                     'The meta description can be read everywhere, but it is probably too short.'}
                                 {descriptionStatus !== 'short' &&
+                                    descriptionTooLong &&
+                                    'The meta description is probably too long. Make it shorter.'}
+                                {descriptionStatus !== 'short' &&
+                                    (descriptionDesktopOnly ||
+                                        (!descriptionTooLong && descriptionFit === 'googleDesktop')) &&
+                                    'The meta description is estimated to be fully shown on desktop on Google, Bing, and Yahoo.'}
+                                {descriptionStatus !== 'short' &&
+                                    !descriptionTooLong &&
+                                    !descriptionDesktopOnly &&
                                     descriptionFit === 'allPlatforms' &&
                                     'The meta description can be read everywhere, nice job!'}
                                 {descriptionStatus !== 'short' &&
-                                    descriptionFit === 'googleDesktop' &&
-                                    'The meta description is estimated to be fully shown on desktop on Google, Bing, and Yahoo.'}
-                                {descriptionStatus !== 'short' &&
+                                    !descriptionTooLong &&
+                                    !descriptionDesktopOnly &&
                                     descriptionFit === 'bingYahoo' &&
                                     'The meta description is estimated to be fully shown on Bing and Yahoo.'}
                                 {descriptionStatus !== 'short' &&
+                                    !descriptionTooLong &&
+                                    !descriptionDesktopOnly &&
                                     descriptionFit === 'none' &&
                                     'The meta description is estimated to be truncated on Google desktop and mobile, Bing, and Yahoo.'}
                             </Alert>
