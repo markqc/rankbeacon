@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { classify } from './classification';
+import { classify, classifyDescriptionFit } from './classification';
 import { DESCRIPTION_MIN_CHARS, SAMPLE, SERP_FONTS, SERP_THRESHOLDS, TITLE_MIN_CHARS } from './constants';
 import { formatUrl } from './formatting';
 import { createCanvasMeasurer, measureText, splitDescriptionOverflow, truncateToWidth } from './textMeasurement';
@@ -66,6 +66,7 @@ export function useSerpPreview(initial: SerpState = SAMPLE) {
         }
         return classify(descriptionWidth, descriptionMax, thresholds.descWarningRatio);
     }, [state.description.length, descriptionWidth, descriptionMax, thresholds.descWarningRatio]);
+    const descriptionFit = useMemo(() => classifyDescriptionFit(descriptionWidth), [descriptionWidth]);
     const splitAtMax = useMemo(
         () =>
             splitDescriptionOverflow(
@@ -125,6 +126,7 @@ export function useSerpPreview(initial: SerpState = SAMPLE) {
         descriptionMax,
         descriptionMaxChars,
         descriptionStatus,
+        descriptionFit,
         descriptionVisible,
         descriptionOverflow,
         descriptionHasMore,
